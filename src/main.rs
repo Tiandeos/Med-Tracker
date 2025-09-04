@@ -1,23 +1,22 @@
-use std::string;
+mod states;
 
-mod message;
-use message::Message;
+use states::message::Message;
 
 use iced::{self as ice, Element, Length, Length::Fill};
-use ice::widget::{button,text,column,row,container};
+use ice::widget::{button,text,row,container};
 
 fn main() {
-    ice::run("a", update, view);
+    ice::run("a", update, view).expect("a");
 }
 fn update(a : &mut String, message: Message) {
     match message{
-        Message::Aaa =>  a.push_str("as"),
+        Message::OpenPanel =>  a.push_str("as"),
     }   
 }
 fn view(a : &String) -> Element<Message> {
     container(row![
         text(a).size(15).width(Length::FillPortion(1)),
-        button("aaa").on_press(Message::Aaa).width(Length::FillPortion(2)).padding(100),
+        button("aaa").on_press(Message::OpenPanel).width(Length::FillPortion(2)).padding(100),
     ]
     .spacing(10)
     )

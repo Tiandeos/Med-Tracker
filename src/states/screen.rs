@@ -1,0 +1,6 @@
+
+enum Screen
+{
+    Time,
+    Stock,
+}
