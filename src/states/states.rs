@@ -1,5 +1,5 @@
-use crate::states::screen::Screen;
+use crate::states::panel::Panel;
 struct States
 {
-    screen: Screen,
+    panel: Panel,
 }

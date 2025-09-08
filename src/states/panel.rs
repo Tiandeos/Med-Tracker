@@ -1,5 +1,5 @@
 
-pub enum Screen
+pub enum Panel
 {
     Time,
     Stock,
