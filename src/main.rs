@@ -1,11 +1,11 @@
 mod states;
-mod view;
-
+mod ui;
+use ui::view;
 use states::message::Message;
 
 use iced as ice;
 
-use crate::states::panel::Panel;
+use states::panel::Panel;
 
 fn main() {
     ice::run("a", update, view::view).expect("a");

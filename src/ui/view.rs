@@ -16,8 +16,8 @@ pub fn view(a : &String) -> Element<Message> {
         button("panel 4").on_press(Message::OpenPanel(Panel::Settings))
         .height(Length::FillPortion(1)).width(Fill)
     ])
-    .width(Length::FillPortion(1)) // Sidebar takes 1/4 of the width
-    .height(Fill);
+    .width(Length::FillPortion(1)).height(Fill); // Sidebar takes 1/4 of the width
+
 
     let main_content = container(
         column![
