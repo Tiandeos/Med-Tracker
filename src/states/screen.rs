@@ -1,5 +1,5 @@
 
-enum Screen
+pub enum Screen
 {
     Time,
     Stock,
