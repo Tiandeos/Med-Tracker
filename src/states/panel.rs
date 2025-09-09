@@ -3,7 +3,7 @@
 pub enum Panel
 {
     Time,
-    Stock,
+    ManageMeds,
     Record,
     Settings
 }

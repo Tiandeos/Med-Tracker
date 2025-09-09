@@ -11,7 +11,7 @@ pub fn view(a : &String) -> Element<Message> {
         height(Length::FillPortion(1)).width(Fill),
         button("panel 2").on_press(Message::OpenPanel(Panel::Record))
         .height(Length::FillPortion(1)).width(Fill),
-        button("panel 3").on_press(Message::OpenPanel(Panel::Stock))
+        button("panel 3").on_press(Message::OpenPanel(Panel::ManageMeds))
         .height(Length::FillPortion(1)).width(Fill),
         button("panel 4").on_press(Message::OpenPanel(Panel::Settings))
         .height(Length::FillPortion(1)).width(Fill)
