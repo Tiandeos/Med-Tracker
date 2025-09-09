@@ -1,7 +1,7 @@
 
-use iced::{self as ice, Element, Length, Length::Fill};
+use iced::{self as ice, Border, Element, Length, Length::Fill, Theme};
 use ice::widget::{button,text,row,column,container};
-
+use iced::widget::container::Style;
 use crate::states::{message::Message, panel::Panel};
 
 pub fn view(a : &String) -> Element<Message> {
@@ -16,14 +16,14 @@ pub fn view(a : &String) -> Element<Message> {
         button("panel 4").on_press(Message::OpenPanel(Panel::Settings))
         .height(Length::FillPortion(1)).width(Fill)
     ])
-    .width(Length::FillPortion(1)).height(Fill); // Sidebar takes 1/4 of the width
+    .width(Length::Fixed(150.0)).height(Fill);
 
 
     let main_content = container(
         column![
             
         ]
-    ).width(Length::FillPortion(3)) // Main content takes 3/4 of the width
+    ).width(Fill) 
     .height(Fill);
     row![
         sidebar,
