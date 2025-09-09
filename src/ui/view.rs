@@ -1,19 +1,21 @@
-
-use iced::{self as ice, Border, Element, Length, Length::Fill, Theme};
+use iced::{self as ice, alignment, Border, Element, Length, Length::Fill, Theme};
 use ice::widget::{button,text,row,column,container};
-use iced::widget::container::Style;
 use crate::states::{message::Message, panel::Panel};
 
 pub fn view(a : &String) -> Element<Message> {
     let sidebar = container( // Side navigation Bar
     column![
-        button("panel 1").on_press(Message::OpenPanel(Panel::Time)).
+        button(text("panel 1").align_y(alignment::Vertical::Center))
+        .on_press(Message::OpenPanel(Panel::Time)).
         height(Length::FillPortion(1)).width(Fill),
-        button("panel 2").on_press(Message::OpenPanel(Panel::Record))
+        button(text("panel 2").align_y(alignment::Vertical::Center))
+        .on_press(Message::OpenPanel(Panel::Record))
         .height(Length::FillPortion(1)).width(Fill),
-        button("panel 3").on_press(Message::OpenPanel(Panel::ManageMeds))
+        button(text("panel 3").align_y(alignment::Vertical::Center))
+        .on_press(Message::OpenPanel(Panel::ManageMeds))
         .height(Length::FillPortion(1)).width(Fill),
-        button("panel 4").on_press(Message::OpenPanel(Panel::Settings))
+        button(text("panel 4").align_y(alignment::Vertical::Center))
+        .on_press(Message::OpenPanel(Panel::Settings))
         .height(Length::FillPortion(1)).width(Fill)
     ])
     .width(Length::Fixed(150.0)).height(Fill);
@@ -23,7 +25,7 @@ pub fn view(a : &String) -> Element<Message> {
         column![
             
         ]
-    ).width(Fill) 
+    ).width(Fill)
     .height(Fill);
     row![
         sidebar,
