@@ -11,19 +11,12 @@ macro_rules! button_with_icon {
                     .content_fit(ContentFit::Cover)
                     .width(40)
                     .height(40),
-                text($label)
+                text($label).size(11)
             ].spacing(10)
         ).align_y(alignment::Vertical::Center)
     };
 }
 pub fn view(a : &String) -> Element<Message> {
-    /*let button1 = container( row![
-        Image::new("icons/home.png")
-        .content_fit(ContentFit::Cover)
-        .width(40)
-        .height(40),
-        text("Today")
-    ].spacing(10));*/
     let sidebar = container( // Side navigation Bar
     column![
         button(button_with_icon!("Home","icons/home.png"))
