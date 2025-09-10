@@ -40,14 +40,14 @@ pub fn view(a : &String) -> Element<Message> {
         ].spacing(4)
     ).style(|_| container::Style
     {
-        background: Some(Background::Color(Color::from_rgb8(20,20,122))),
+        background: Some(Background::Color(Color::from_rgb8(0,85,175))),
         ..Default::default()
     })
     .width(Length::Fixed(150.0)).height(Fill);
 
     let border = container("").
         width(4).height(Fill).style(|_| container::Style{
-        background: Some(Background::Color(Color::from_rgb8(20,20,122))),
+        background: Some(Background::Color(Color::from_rgb8(0,85,175))),
         ..Default::default()
     });
     let main_content = container(
