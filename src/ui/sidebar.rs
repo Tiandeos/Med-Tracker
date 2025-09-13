@@ -25,19 +25,19 @@ pub fn side_bar () -> Element<'static,Message>
         iced::widget::column![
         button(button_with_icon!("Home","icons/home.png"))
         .style(navbar_button).padding(0)
-        .on_press(Message::OpenPanel(Panel::Time)).
+        .on_press(Message::OpenTime).
         height(Length::FillPortion(1)).width(Fill),
         button(button_with_icon!("Calendar","icons/calendar.png"))
         .style(navbar_button).padding(0)
-        .on_press(Message::OpenPanel(Panel::Record))
+        .on_press(Message::OpenRecord)
         .height(Length::FillPortion(1)).width(Fill),
         button(button_with_icon!("Medications","icons/pill.png"))
         .style(navbar_button).padding(0)
-        .on_press(Message::OpenPanel(Panel::ManageMeds))
+        .on_press(Message::OpenManageMeds)
         .height(Length::FillPortion(1)).width(Fill),
         button(button_with_icon!("Settings","icons/settings.png"))
         .style(navbar_button).padding(0)
-        .on_press(Message::OpenPanel(Panel::Settings))
+        .on_press(Message::OpenSettings)
         .height(Length::FillPortion(1)).width(Fill)
         ].spacing(4)
     )
