@@ -8,7 +8,6 @@ use iced as ice;
 
 use states::panel::Panel;
 use crate::states::state::State;
-use crate::ui::panel::settings::Settings;
 use crate::update::loadpanel::load_panel;
 
 fn main() {
@@ -23,5 +22,6 @@ fn update(state : &mut State, message: Message) {
         Message::Settings(settings) => {
             state.settingsui.update(settings);
         }
+        Message::Time(time) => state.timeui.update(time),
     }   
 }

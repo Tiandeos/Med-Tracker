@@ -1,5 +1,5 @@
 use crate::ui::panel::settings;
-
+use crate::ui::panel::time;
 #[derive(Debug, Clone)]
 pub enum Message {
     OpenTime,
@@ -7,4 +7,5 @@ pub enum Message {
     OpenRecord,
     OpenSettings,
     Settings(settings::Message),
+    Time(time::Message),
 }

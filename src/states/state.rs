@@ -1,9 +1,11 @@
 use crate::states::panel::Panel;
 use crate::ui::panel::settings;
+use crate::ui::panel::time;
 pub struct State
 {
     pub panel: Panel,
     pub settingsui: settings::Settings,
+    pub timeui: time::Time,
 }
 impl Default for State
 {
@@ -11,6 +13,7 @@ impl Default for State
         State {
             panel: Panel::Time,
             settingsui: settings::Settings::new(),
+            timeui: time::Time::new(),
         }
     }
 

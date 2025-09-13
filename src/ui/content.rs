@@ -10,7 +10,7 @@ pub fn main_content<'a>(state: &State) -> Element<'a,Message>
         column![
             match &state.panel
             {
-                Panel::Time => state.settingsui.view().map(Message::Settings),
+                Panel::Time => state.timeui.view().map(Message::Time),
                 Panel::Record => state.settingsui.view().map(Message::Settings),
                 Panel::ManageMeds =>state.settingsui.view().map(Message::Settings),
                 Panel::Settings => state.settingsui.view().map(Message::Settings),
