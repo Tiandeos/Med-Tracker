@@ -3,6 +3,7 @@ use ice::ContentFit;
 use ice::widget::{Image,button,text,row,column,container};
 use iced::widget::Container;
 use crate::states::{message::Message, panel::Panel};
+use crate::states::state::State;
 use crate::ui::style::button::navbar_button;
 
 macro_rules! button_with_icon {
@@ -18,7 +19,7 @@ macro_rules! button_with_icon {
         ).align_y(alignment::Vertical::Center)
     };
 }
-pub fn view(a : &String) -> Element<Message> {
+pub fn view(state : &State) -> Element<Message> {
     let sidebar = container( // Side navigation Bar
     column![
         button(button_with_icon!("Home","icons/home.png"))

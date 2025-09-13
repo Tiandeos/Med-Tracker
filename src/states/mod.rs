@@ -1,3 +1,3 @@
-pub mod states;
+pub mod state;
 pub mod message;
 pub mod panel;
