@@ -2,13 +2,13 @@ use iced::{Element, Theme};
 use iced::widget::button;
 
 #[derive(Debug,Clone)]
-pub struct Settings
+pub struct Settingsui
 {
     section: Section,
 }
-impl Settings
+impl Settingsui
 {
-    pub fn new() -> Settings {
+    pub fn new() -> Settingsui {
         Self {
             section: Section::Main,
         }

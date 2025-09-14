@@ -19,9 +19,9 @@ fn update(state : &mut State, message: Message) {
         Message::OpenManageMeds =>  load_panel(state, &Panel::ManageMeds),
         Message::OpenRecord => load_panel(state, &Panel::Record),
         Message::OpenSettings => load_panel(state, &Panel::Settings),
-        Message::Settings(settings) => {
-            state.settingsui.update(settings);
-        }
+        Message::Settings(settings) => state.settingsui.update(settings),
         Message::Time(time) => state.timeui.update(time),
+        Message::Record(record) => state.recordui.update(record),
+        Message::ManageMeds(managemeds) => state.managemedsui.update(managemeds),
     }   
 }

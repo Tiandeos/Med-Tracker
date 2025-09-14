@@ -1,5 +1,4 @@
-use crate::ui::panel::settings;
-use crate::ui::panel::time;
+use crate::ui::panel::{record, settings, time, managemeds};
 #[derive(Debug, Clone)]
 pub enum Message {
     OpenTime,
@@ -8,4 +7,6 @@ pub enum Message {
     OpenSettings,
     Settings(settings::Message),
     Time(time::Message),
+    Record(record::Message),
+    ManageMeds(managemeds::Message),
 }
