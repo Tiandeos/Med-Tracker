@@ -1,9 +1,7 @@
-
-#[derive(Clone,Debug)]
-pub enum Panel
-{
+#[derive(Clone, Debug)]
+pub enum Panel {
     Time,
     ManageMeds,
     Record,
-    Settings
+    Settings,
 }

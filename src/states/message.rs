@@ -1,4 +1,4 @@
-use crate::ui::panel::{record, settings, time, managemeds};
+use crate::ui::panel::{managemeds, record, settings, time};
 #[derive(Debug, Clone)]
 pub enum Message {
     OpenTime,

@@ -1,5 +1,5 @@
-pub mod view;
-mod style;
-mod sidebar;
 mod content;
 pub mod panel;
+mod sidebar;
+mod style;
+pub mod view;

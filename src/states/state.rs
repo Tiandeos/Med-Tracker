@@ -1,15 +1,13 @@
 use crate::states::panel::Panel;
-use crate::ui::panel::{settings,time,record,managemeds};
-pub struct State
-{
+use crate::ui::panel::{managemeds, record, settings, time};
+pub struct State {
     pub panel: Panel,
     pub settingsui: settings::Settingsui,
     pub timeui: time::Time,
     pub recordui: record::Record,
     pub managemedsui: managemeds::ManageMedsUI,
 }
-impl Default for State
-{
+impl Default for State {
     fn default() -> Self {
         State {
             panel: Panel::Time,
@@ -19,12 +17,9 @@ impl Default for State
             managemedsui: managemeds::ManageMedsUI::new(),
         }
     }
-
 }
-impl State
-{
-    pub fn change_panel(&mut self, panel: &Panel)
-    {
+impl State {
+    pub fn change_panel(&mut self, panel: &Panel) {
         self.panel = panel.clone();
     }
 }
