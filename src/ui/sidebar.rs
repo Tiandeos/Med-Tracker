@@ -1,6 +1,6 @@
 use ice::ContentFit;
 use ice::widget::{Image, button, container, row, text};
-use iced::{self as ice, Background, Color, Element, Fill, Length, alignment};
+use iced::{self as ice, Background, Color, Element, Fill, Length, alignment, theme};
 
 use crate::states::message::Message;
 use crate::ui::style::button::navbar_button;
@@ -48,10 +48,7 @@ pub fn side_bar() -> Element<'static, Message> {
         ]
         .spacing(4),
     )
-    .style(|_| container::Style {
-        background: Some(Background::Color(Color::from_rgb8(0, 85, 175))),
-        ..Default::default()
-    })
+    .style(sidebar_style)
     .width(Length::Fixed(150.0))
     .height(Fill)
     .into()
@@ -60,9 +57,20 @@ pub fn sidebar_border() -> Element<'static, Message> {
     container("")
         .width(4)
         .height(Fill)
-        .style(|_| container::Style {
-            background: Some(Background::Color(Color::from_rgb8(0, 85, 175))),
-            ..Default::default()
-        })
+        .style(sidebar_border_style)
         .into()
+}
+fn sidebar_border_style(theme: &ice::Theme) -> container::Style {
+    let palette = theme.extended_palette();
+    container::Style {
+        background: Some(Background::Color(palette.background.weak.color)),
+        ..Default::default()
+    }
+}
+fn sidebar_style(theme: &ice::Theme) -> container::Style {
+    let palette = theme.extended_palette();
+    container::Style {
+        background: Some(Background::Color(palette.background.weak.color)),
+        ..Default::default()
+    }
 }

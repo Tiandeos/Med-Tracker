@@ -12,7 +12,10 @@ use crate::update::loadpanel::load_panel;
 use states::panel::Panel;
 
 fn main() {
-    ice::run("a", update, view::view).expect("a");
+    ice::application("Med Tracker", update, view::view)
+        .theme(view::theme)
+        .run()
+        .expect("a");
 }
 fn update(state: &mut State, message: Message) {
     match message {

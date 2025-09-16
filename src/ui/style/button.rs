@@ -1,26 +1,23 @@
-use ice::widget::{button, button::Style};
+use ice::widget::button::Style;
 use iced as ice;
 use iced::widget::button::Status;
-use iced::{Background, Border, Color, Theme};
+use iced::{Background, Color, Theme};
 
 pub fn navbar_button(theme: &Theme, status: Status) -> Style {
+    let palette = theme.extended_palette();
+    let color: Color;
+    if !palette.is_dark {
+        color = Color::from_rgb8(20, 20, 20);
+    } else {
+        color = Color::from_rgb8(220, 220, 220);
+    }
     match status {
-        Status::Active => navbar_button_background(
-            Color::from_rgb8(0, 125, 222),
-            Color::from_rgb8(255, 255, 255),
-        ),
-        Status::Disabled => navbar_button_background(
-            Color::from_rgb8(22, 22, 22),
-            Color::from_rgb8(255, 255, 255),
-        ),
-        Status::Hovered => navbar_button_background(
-            Color::from_rgb8(25, 145, 245),
-            Color::from_rgb8(255, 255, 255),
-        ),
-        Status::Pressed => navbar_button_background(
-            Color::from_rgb8(0, 100, 200),
-            Color::from_rgb8(255, 255, 255),
-        ),
+        Status::Active => navbar_button_background(palette.primary.base.color, color),
+        Status::Disabled => {
+            navbar_button_background(palette.background.weak.color, palette.background.weak.color)
+        }
+        Status::Hovered => navbar_button_background(palette.primary.weak.color, color),
+        Status::Pressed => navbar_button_background(palette.primary.strong.color, color),
     }
 }
 fn navbar_button_background(background_color: Color, text_color: Color) -> Style {

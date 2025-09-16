@@ -1,4 +1,4 @@
-use iced::{self as ice, Element, Length::Fill};
+use iced::{self as ice, Element, Length::Fill, Theme};
 
 use crate::states::message::Message;
 use crate::states::state::State;
@@ -11,4 +11,7 @@ pub fn view(state: &State) -> Element<Message> {
         .width(Fill)
         .height(Fill)
         .into()
+}
+pub fn theme(state: &State) -> Theme {
+    Theme::Dark
 }
