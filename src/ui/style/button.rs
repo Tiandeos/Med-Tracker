@@ -16,8 +16,8 @@ pub fn navbar_button(theme: &Theme, status: Status) -> Style {
         Status::Disabled => {
             navbar_button_background(palette.background.weak.color, palette.background.weak.color)
         }
-        Status::Hovered => navbar_button_background(palette.primary.weak.color, color),
-        Status::Pressed => navbar_button_background(palette.primary.strong.color, color),
+        Status::Hovered => navbar_button_background(palette.primary.strong.color, color),
+        Status::Pressed => navbar_button_background(palette.primary.weak.color, color),
     }
 }
 fn navbar_button_background(background_color: Color, text_color: Color) -> Style {

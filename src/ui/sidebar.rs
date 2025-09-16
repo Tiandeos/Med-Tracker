@@ -11,9 +11,9 @@ macro_rules! button_with_icon {
             row![
                 Image::new($icon_path)
                     .content_fit(ContentFit::Cover)
-                    .width(40)
-                    .height(40),
-                text($label).size(12).align_y(alignment::Vertical::Bottom)
+                    .width(30)
+                    .height(30),
+                text($label).size(14).align_y(alignment::Vertical::Bottom)
             ].spacing(10).align_y(alignment::Vertical::Center)
         ).align_y(alignment::Vertical::Center)
     };
@@ -49,13 +49,13 @@ pub fn side_bar() -> Element<'static, Message> {
         .spacing(1),
     )
     .style(sidebar_style)
-    .width(Length::Fixed(150.0))
+    .width(Length::Fixed(130.0))
     .height(Fill)
     .into()
 }
 pub fn sidebar_border() -> Element<'static, Message> {
     container("")
-        .width(4)
+        .width(3)
         .height(Fill)
         .style(sidebar_border_style)
         .into()

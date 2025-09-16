@@ -1,5 +1,6 @@
 use iced as ice;
 pub struct Settings {
+    pub font_size: u16,
     pub language: String,
     pub is_theme_changed: bool,
     pub theme: ice::Theme,
@@ -10,6 +11,7 @@ pub struct Settings {
 impl Settings {
     pub fn new() -> Settings {
         Settings {
+            font_size: 14,
             language: "English".to_string(),
             is_theme_changed: false,
             theme: ice::Theme::Dark,
