@@ -1,6 +1,6 @@
 use ice::ContentFit;
 use ice::widget::{Image, button, container, row, text};
-use iced::{self as ice, Background, Color, Element, Fill, Length, alignment, theme};
+use iced::{self as ice, Background, Element, Fill, Length, alignment};
 
 use crate::states::message::Message;
 use crate::ui::style::button::navbar_button;
@@ -13,8 +13,8 @@ macro_rules! button_with_icon {
                     .content_fit(ContentFit::Cover)
                     .width(40)
                     .height(40),
-                text($label).size(12)
-            ].spacing(10)
+                text($label).size(12).align_y(alignment::Vertical::Bottom)
+            ].spacing(10).align_y(alignment::Vertical::Center)
         ).align_y(alignment::Vertical::Center)
     };
 }
@@ -46,7 +46,7 @@ pub fn side_bar() -> Element<'static, Message> {
                 .height(Length::FillPortion(1))
                 .width(Fill)
         ]
-        .spacing(4),
+        .spacing(1),
     )
     .style(sidebar_style)
     .width(Length::Fixed(150.0))
