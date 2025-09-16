@@ -13,5 +13,9 @@ pub fn view(state: &State) -> Element<Message> {
         .into()
 }
 pub fn theme(state: &State) -> Theme {
-    Theme::Dark
+    if state.settings.is_theme_changed {
+        state.settings.theme.clone()
+    } else {
+        Theme::Nord
+    }
 }

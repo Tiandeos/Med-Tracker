@@ -1,7 +1,9 @@
 use crate::states::panel::Panel;
+use crate::states::settings::Settings;
 use crate::ui::panel::{managemeds, record, settings, time};
 pub struct State {
     pub panel: Panel,
+    pub settings: Settings,
     pub settingsui: settings::Settingsui,
     pub timeui: time::Time,
     pub recordui: record::Record,
@@ -15,6 +17,7 @@ impl Default for State {
             timeui: time::Time::new(),
             recordui: record::Record::new(),
             managemedsui: managemeds::ManageMedsUI::new(),
+            settings: Settings::new(),
         }
     }
 }
