@@ -3,43 +3,31 @@ use ice::widget::{Image, button, container, row, text};
 use iced::{self as ice, Background, Element, Fill, Length, alignment};
 
 use crate::states::message::Message;
+use crate::ui::macros;
 use crate::ui::style::button::navbar_button;
 
-macro_rules! button_with_icon {
-($label:expr, $icon_path:expr) => {
-        container(
-            row![
-                Image::new($icon_path)
-                    .content_fit(ContentFit::Cover)
-                    .width(30)
-                    .height(30),
-                text($label).size(14).align_y(alignment::Vertical::Bottom)
-            ].spacing(10).align_y(alignment::Vertical::Center)
-        ).align_y(alignment::Vertical::Center)
-    };
-}
 pub fn side_bar() -> Element<'static, Message> {
     container(
         iced::widget::column![
-            button(button_with_icon!("Home", "icons/home.png"))
+            button(macros::button_with_icon!("Home", "icons/home.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenTime)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(button_with_icon!("Calendar", "icons/calendar.png"))
+            button(macros::button_with_icon!("Calendar", "icons/calendar.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenRecord)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(button_with_icon!("Medications", "icons/pill.png"))
+            button(macros::button_with_icon!("Medications", "icons/pill.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenManageMeds)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(button_with_icon!("Settings", "icons/settings.png"))
+            button(macros::button_with_icon!("Settings", "icons/settings.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenSettings)
