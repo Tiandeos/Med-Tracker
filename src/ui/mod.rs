@@ -1,4 +1,5 @@
 mod content;
+pub mod macros;
 pub mod panel;
 mod sidebar;
 mod style;
