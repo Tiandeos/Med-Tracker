@@ -28,6 +28,14 @@ fn navbar_button_background(background_color: Color, text_color: Color) -> Style
     }
 }
 pub fn bordered_button(theme: &Theme, status: Status) -> Style {
+    bordered_button_size_radius(30.0, 2.0, theme, status)
+}
+fn bordered_button_size_radius(
+    border_radius_size: f32,
+    border_width_size: f32,
+    theme: &Theme,
+    status: Status,
+) -> Style {
     let palette = theme.extended_palette();
     let text_color: Color;
     if !palette.is_dark {
@@ -37,38 +45,52 @@ pub fn bordered_button(theme: &Theme, status: Status) -> Style {
     }
     match status {
         Status::Active => bordered_button_color(
+            border_radius_size,
+            border_width_size,
             palette.primary.base.color,
             palette.background.weak.color,
             text_color,
         ),
         Status::Disabled => bordered_button_color(
+            border_radius_size,
+            border_width_size,
             palette.background.strong.color,
             palette.background.weak.color,
             text_color,
         ),
         Status::Hovered => bordered_button_color(
+            border_radius_size,
+            border_width_size,
             palette.primary.strong.color,
             palette.background.weak.color,
             text_color,
         ),
         Status::Pressed => bordered_button_color(
+            border_radius_size,
+            border_width_size,
             palette.primary.weak.color,
             palette.background.weak.color,
             text_color,
         ),
     }
 }
-fn bordered_button_color(background_color: Color, border_color: Color, text_color: Color) -> Style {
+fn bordered_button_color(
+    border_radius_size: f32,
+    border_width_size: f32,
+    background_color: Color,
+    border_color: Color,
+    text_color: Color,
+) -> Style {
     Style {
         background: Some(Background::Color(background_color)),
         border: Border {
             color: border_color,
-            width: 2.0,
+            width: border_width_size,
             radius: iced::border::Radius {
-                top_left: (30.0),
-                top_right: (30.0),
-                bottom_right: (30.0),
-                bottom_left: (30.0),
+                top_left: (border_radius_size),
+                top_right: (border_radius_size),
+                bottom_right: (border_radius_size),
+                bottom_left: (border_radius_size),
             },
         },
         text_color,
