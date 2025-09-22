@@ -1,4 +1,4 @@
-macro_rules! button_with_icon {
+macro_rules! button_with_icon_text{
 ($label:expr, $icon_path:expr) => {
         container(
             row![
@@ -11,4 +11,4 @@ macro_rules! button_with_icon {
         ).align_y(alignment::Vertical::Center)
     };
 }
-pub(crate) use button_with_icon;
+pub(crate) use button_with_icon_text;

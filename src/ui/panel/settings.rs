@@ -19,22 +19,22 @@ impl Settingsui {
     pub fn view<'a>(&self) -> Element<'a, Message> {
         scrollable(
             column![
-                button(macros::button_with_icon!("Language", "icons/home.png"))
+                button(macros::button_with_icon_text!("Language", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::Language))
                     .width(Fill)
                     .height(100)
                     .style(bordered_button),
-                button(macros::button_with_icon!("Theme", "icons/home.png"))
+                button(macros::button_with_icon_text!("Theme", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::Theme))
                     .width(Fill)
                     .height(100)
                     .style(bordered_button),
-                button(macros::button_with_icon!("Sound", "icons/home.png"))
+                button(macros::button_with_icon_text!("Sound", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::Sound))
                     .width(Fill)
                     .height(100)
                     .style(bordered_button),
-                button(macros::button_with_icon!("System", "icons/home.png"))
+                button(macros::button_with_icon_text!("System", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::System))
                     .width(Fill)
                     .height(100)

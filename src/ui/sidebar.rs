@@ -9,25 +9,25 @@ use crate::ui::style::button::navbar_button;
 pub fn side_bar() -> Element<'static, Message> {
     container(
         iced::widget::column![
-            button(macros::button_with_icon!("Home", "icons/home.png"))
+            button(macros::button_with_icon_text!("Home", "icons/home.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenTime)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(macros::button_with_icon!("Calendar", "icons/calendar.png"))
+            button(macros::button_with_icon_text!("Calendar", "icons/calendar.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenRecord)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(macros::button_with_icon!("Medications", "icons/pill.png"))
+            button(macros::button_with_icon_text!("Medications", "icons/pill.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenManageMeds)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(macros::button_with_icon!("Settings", "icons/settings.png"))
+            button(macros::button_with_icon_text!("Settings", "icons/settings.png"))
                 .style(navbar_button)
                 .padding(0)
                 .on_press(Message::OpenSettings)
