@@ -4,7 +4,7 @@ use crate::states::message::Message;
 use crate::states::state::State;
 use crate::ui::content::main_content;
 use crate::ui::sidebar::{side_bar, sidebar_border};
-use dark_light::{Error, Mode};
+use dark_light::Mode;
 use ice::widget::row;
 
 pub fn view(state: &State) -> Element<Message> {

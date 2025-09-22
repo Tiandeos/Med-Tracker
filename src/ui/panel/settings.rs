@@ -1,5 +1,5 @@
 use crate::ui::macros;
-use crate::ui::style::button::settings_button;
+use crate::ui::style::button::bordered_button;
 use iced::ContentFit;
 use iced::Element;
 use iced::Length::Fill;
@@ -23,22 +23,22 @@ impl Settingsui {
                     .on_press(Message::OpenSection(Section::Language))
                     .width(Fill)
                     .height(100)
-                    .style(settings_button),
+                    .style(bordered_button),
                 button(macros::button_with_icon!("Theme", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::Theme))
                     .width(Fill)
                     .height(100)
-                    .style(settings_button),
+                    .style(bordered_button),
                 button(macros::button_with_icon!("Sound", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::Sound))
                     .width(Fill)
                     .height(100)
-                    .style(settings_button),
+                    .style(bordered_button),
                 button(macros::button_with_icon!("System", "icons/home.png"))
                     .on_press(Message::OpenSection(Section::System))
                     .width(Fill)
                     .height(100)
-                    .style(settings_button),
+                    .style(bordered_button),
             ]
             .spacing(50),
         )
