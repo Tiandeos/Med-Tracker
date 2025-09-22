@@ -11,4 +11,17 @@ macro_rules! button_with_icon_text{
         ).align_y(alignment::Vertical::Center)
     };
 }
+macro_rules! button_with_icon{
+($icon_path:expr) => {
+        container(
+            row![
+                Image::new($icon_path)
+                    .content_fit(ContentFit::Cover)
+                    .width(20)
+                    .height(20),
+            ].spacing(10).align_y(alignment::Vertical::Center)
+        ).align_y(alignment::Vertical::Center)
+    };
+}
+pub(crate) use button_with_icon;
 pub(crate) use button_with_icon_text;
