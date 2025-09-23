@@ -2,10 +2,10 @@ mod states;
 mod ui;
 mod update;
 
+use chrono::{Local, Timelike};
+use iced::{self as ice, Subscription, time};
 use states::message::Message;
 use ui::view;
-
-use iced as ice;
 
 use crate::states::state::State;
 use crate::update::loadpanel::load_panel;
@@ -14,11 +14,13 @@ use states::panel::Panel;
 fn main() {
     ice::application("Med Tracker", update, view::view)
         .theme(view::theme)
+        .subscription(update_time)
         .run()
         .expect("a");
 }
 fn update(state: &mut State, message: Message) {
     match message {
+        Message::TimeCheck => check_medication_schedule(),
         Message::OpenTime => load_panel(state, &Panel::Time),
         Message::OpenManageMeds => load_panel(state, &Panel::ManageMeds),
         Message::OpenRecord => load_panel(state, &Panel::Record),
@@ -28,4 +30,11 @@ fn update(state: &mut State, message: Message) {
         Message::Record(record) => state.recordui.update(record),
         Message::ManageMeds(managemeds) => state.managemedsui.update(managemeds),
     }
+}
+fn check_medication_schedule() {
+    let a = Local::now().to_utc().hour();
+    println!("Time: {}", a);
+}
+fn update_time(state: &State) -> Subscription<Message> {
+    time::every(time::Duration::from_secs(1)).map(|_| Message::TimeCheck)
 }

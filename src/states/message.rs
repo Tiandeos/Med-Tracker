@@ -9,4 +9,5 @@ pub enum Message {
     Time(time::Message),
     Record(record::Message),
     ManageMeds(managemeds::Message),
+    TimeCheck,
 }
