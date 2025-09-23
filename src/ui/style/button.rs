@@ -27,6 +27,9 @@ fn navbar_button_background(background_color: Color, text_color: Color) -> Style
         ..Default::default()
     }
 }
+pub fn close_button(theme: &Theme, status: Status) -> Style {
+    bordered_button_size_radius(100.0, 1.0, theme, status)
+}
 pub fn bordered_button(theme: &Theme, status: Status) -> Style {
     bordered_button_size_radius(30.0, 2.0, theme, status)
 }
