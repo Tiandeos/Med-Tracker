@@ -1,4 +1,4 @@
-use crate::states::schedule::Schedule;
+use crate::states::medication::schedule::Schedule;
 
 pub struct Medication {
     name: String,            // Medication name
