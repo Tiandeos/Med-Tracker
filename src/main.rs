@@ -8,6 +8,7 @@ use states::message::Message;
 use ui::view;
 
 use crate::states::app::App;
+use crate::states::state::State;
 use crate::update::loadpanel::load_panel;
 use states::panel::Panel;
 
@@ -20,13 +21,13 @@ fn main() {
 }
 fn update(state: &mut App, message: Message) {
     match message {
-        Message::TimeCheck => check_medication_schedule(),
+        Message::TimeCheck => check_medication_schedule(&mut state.state),
         Message::OpenTime => load_panel(state, &Panel::Time),
         Message::OpenManageMeds => load_panel(state, &Panel::ManageMeds),
         Message::OpenRecord => load_panel(state, &Panel::Record),
         Message::OpenSettings => load_panel(state, &Panel::Settings),
         Message::Settings(settings) => state.uistate.settingsui.update(settings),
-        Message::Time(time) => state.uistate.timeui.update(time),
+        Message::Time(time) => state.uistate.timeui.update(&mut state.state, time),
         Message::Record(record) => state.uistate.recordui.update(record),
         Message::ManageMeds(managemeds) => state.uistate.managemedsui.update(managemeds),
     }

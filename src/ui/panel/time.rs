@@ -25,12 +25,13 @@ impl TimeUI {
             Section::AddMedication => self.medication_add_panel(),
         }
     }
-    pub fn update(&mut self, message: Message) {
+    pub fn update(&mut self, state: &mut State, message: Message) {
         match message {
             Message::OpenSection(Main) => self.section = Section::Main,
             Message::OpenSection(Section::AddMedication) => self.section = Section::AddMedication,
             Message::MedicationNameChange(content) => self.medication_name = content,
-            Message::AddMedication => self.add_medication(),
+            Message::MedicationTimeChange(content) => self.medication_time = content,
+            Message::AddMedication => self.add_medication(state),
         }
     }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
@@ -86,5 +87,6 @@ enum Section {
 pub enum Message {
     OpenSection(Section),
     MedicationNameChange(String),
+    MedicationTimeChange(String),
     AddMedication,
 }
