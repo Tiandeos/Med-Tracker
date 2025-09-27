@@ -104,7 +104,7 @@ impl TimeUI {
         let mut medication: Medication = Medication::new(self.medication_name.clone(), 0);
         let schedule: Schedule = Schedule::new(time);
         medication.schedule.push(schedule);
-        state.medications.push(medication);
+        medications_list.push(medication);
     }
 }
 #[derive(Debug, Clone)]

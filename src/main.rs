@@ -2,12 +2,13 @@ mod states;
 mod ui;
 mod update;
 
-use chrono::{Local, Timelike};
+use chrono::{Datelike, Local, Timelike};
 use iced::{self as ice, Subscription, time};
 use states::message::Message;
 use ui::view;
 
 use crate::states::app::App;
+use crate::states::medication::medication::Medication;
 use crate::states::state::State;
 use crate::update::loadpanel::load_panel;
 use states::panel::Panel;
@@ -32,10 +33,22 @@ fn update(state: &mut App, message: Message) {
         Message::ManageMeds(managemeds) => state.uistate.managemedsui.update(managemeds),
     }
 }
-fn check_medication_schedule() {
-    let a = Local::now().to_utc().hour();
-    println!("Time: {}", a);
+fn check_medication_schedule(state: &mut State) {
+    let hour = Local::now().hour();
+    let minute = Local::now().minute();
+    let currentday = Local::now().weekday().to_string();
+    println!("Hour: {} Minute: {} Weekday: {}", hour, minute, currentday);
+    let medication_list: &mut Vec<Medication> = &mut state.medications;
+    for medication in medication_list {
+        println!("Medication Name:{}", medication.name);
+        if hour >= medication.schedule[0].time[0] {
+            println!("Medication hour: {}", medication.schedule[0].time[0]);
+            if minute >= medication.schedule[0].time[1] {
+                println!("Medication minute: {}", medication.schedule[0].time[1]);
+            }
+        }
+    }
 }
-fn update_time(state: &State) -> Subscription<Message> {
+fn update_time(state: &App) -> Subscription<Message> {
     time::every(time::Duration::from_secs(1)).map(|_| Message::TimeCheck)
 }
