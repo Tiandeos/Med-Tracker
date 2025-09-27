@@ -1,3 +1,4 @@
+use crate::states::state::State;
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
 use crate::ui::style::button::{bordered_button, close_button};
@@ -7,12 +8,12 @@ use ice::widget::{Image, button, column, container, row, scrollable, text, text_
 use ice::{ContentFit, Element, Length, alignment};
 use iced::{self as ice};
 
-pub struct Time {
+pub struct TimeUI {
     section: Section,
     medication_name: String,
 }
-impl Time {
-    pub fn new() -> Time {
+impl TimeUI {
+    pub fn new() -> TimeUI {
         Self {
             section: Main,
             medication_name: String::from(""),
@@ -29,6 +30,7 @@ impl Time {
             Message::OpenSection(Main) => self.section = Section::Main,
             Message::OpenSection(Section::AddMedication) => self.section = Section::AddMedication,
             Message::MedicationNameChange(content) => self.medication_name = content,
+            Message::AddMedication => self.add_medication(),
         }
     }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
@@ -73,6 +75,7 @@ impl Time {
         .width(Fill)
         .into()
     }
+    fn add_medication(&self) {}
 }
 #[derive(Debug, Clone)]
 enum Section {
@@ -83,4 +86,5 @@ enum Section {
 pub enum Message {
     OpenSection(Section),
     MedicationNameChange(String),
+    AddMedication,
 }

@@ -1,7 +1,6 @@
+use crate::states::app::App;
 use crate::states::panel::Panel;
-use crate::states::state::State;
-
-pub fn load_panel(state: &mut State, panel: &Panel) {
-    state.change_panel(panel);
-    println!("{:?}", state.panel);
+pub fn load_panel(state: &mut App, panel: &Panel) {
+    state.state.change_panel(panel);
+    println!("{:?}", state.state.panel);
 }
