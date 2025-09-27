@@ -1,3 +1,6 @@
+use crate::states::app::App;
+use crate::states::medication::medication::Medication;
+use crate::states::medication::schedule::Schedule;
 use crate::states::state::State;
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
@@ -11,12 +14,16 @@ use iced::{self as ice};
 pub struct TimeUI {
     section: Section,
     medication_name: String,
+    medication_time_hour: String,
+    medication_time_minute: String,
 }
 impl TimeUI {
     pub fn new() -> TimeUI {
         Self {
             section: Main,
             medication_name: String::from(""),
+            medication_time_hour: String::from(""),
+            medication_time_minute: String::from(""),
         }
     }
     pub fn view<'a>(&self) -> Element<'a, Message> {
@@ -30,7 +37,8 @@ impl TimeUI {
             Message::OpenSection(Main) => self.section = Section::Main,
             Message::OpenSection(Section::AddMedication) => self.section = Section::AddMedication,
             Message::MedicationNameChange(content) => self.medication_name = content,
-            Message::MedicationTimeChange(content) => self.medication_time = content,
+            Message::MedicationTimeHourChange(content) => self.medication_time_hour = content,
+            Message::MedicationTimeMinuteChange(content) => self.medication_time_minute = content,
             Message::AddMedication => self.add_medication(state),
         }
     }
@@ -64,11 +72,23 @@ impl TimeUI {
             .height(100),
             row![
                 text("Medication Name: ").align_y(alignment::Vertical::Center),
-                text_input("...", &self.medication_name).on_input(Message::MedicationNameChange)
+                text_input("...", &self.medication_name).on_input(Message::MedicationNameChange),
             ]
             .spacing(20)
             .height(Fill),
-            button("a").height(100),
+            row![
+                text("Hour: ").align_y(alignment::Vertical::Center),
+                text_input("...", &self.medication_time_hour)
+                    .on_input(Message::MedicationTimeHourChange),
+                text("Minute: ").align_y(alignment::Vertical::Center),
+                text_input("...", &self.medication_time_minute)
+                    .on_input(Message::MedicationTimeMinuteChange),
+            ]
+            .spacing(20)
+            .height(Fill),
+            button("Add Medication")
+                .on_press(Message::AddMedication)
+                .height(100),
         ])
         .style(container_panel)
         .padding(20)
@@ -76,10 +96,19 @@ impl TimeUI {
         .width(Fill)
         .into()
     }
-    fn add_medication(&self) {}
+    fn add_medication(&self, state: &mut State) {
+        let medications_list: &mut Vec<Medication> = &mut state.medications;
+        let hour: u32 = self.medication_time_hour.parse().expect("Not a number");
+        let minute: u32 = self.medication_time_minute.parse().expect("Not a number");
+        let time: [u32; 2] = [hour, minute];
+        let mut medication: Medication = Medication::new(self.medication_name.clone(), 0);
+        let schedule: Schedule = Schedule::new(time);
+        medication.schedule.push(schedule);
+        state.medications.push(medication);
+    }
 }
 #[derive(Debug, Clone)]
-enum Section {
+pub enum Section {
     Main,
     AddMedication,
 }
@@ -87,6 +116,7 @@ enum Section {
 pub enum Message {
     OpenSection(Section),
     MedicationNameChange(String),
-    MedicationTimeChange(String),
+    MedicationTimeHourChange(String),
+    MedicationTimeMinuteChange(String),
     AddMedication,
 }
