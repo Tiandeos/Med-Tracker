@@ -44,6 +44,9 @@ fn check_medication_schedule(state: &mut State) {
         let schedule_list = &medication.schedule;
         let mut is_in_day = true;
         for schedule in schedule_list {
+            if schedule.is_completed {
+                continue;
+            }
             let weekday_list = &schedule.week_day;
             for weekday in weekday_list {
                 if *weekday == currentday {
