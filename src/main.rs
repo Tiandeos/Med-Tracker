@@ -36,15 +36,25 @@ fn update(state: &mut App, message: Message) {
 fn check_medication_schedule(state: &mut State) {
     let hour = Local::now().hour();
     let minute = Local::now().minute();
-    let currentday = Local::now().weekday().to_string();
+    let currentday = Local::now().weekday();
     println!("Hour: {} Minute: {} Weekday: {}", hour, minute, currentday);
     let medication_list: &mut Vec<Medication> = &mut state.medications;
     for medication in medication_list {
         println!("Medication Name:{}", medication.name);
-        if hour >= medication.schedule[0].time[0] {
-            println!("Medication hour: {}", medication.schedule[0].time[0]);
-            if minute >= medication.schedule[0].time[1] {
-                println!("Medication minute: {}", medication.schedule[0].time[1]);
+        let schedule_list = &medication.schedule;
+        let mut is_in_day = true;
+        for schedule in schedule_list {
+            let weekday_list = &schedule.week_day;
+            for weekday in weekday_list {
+                if *weekday == currentday {
+                    is_in_day = true;
+                    break;
+                } else {
+                    is_in_day = false;
+                }
+            }
+            if is_in_day && hour >= schedule.time[0] && minute >= schedule.time[1] {
+                println!("Medication hour: {}", medication.schedule[0].time[0]);
             }
         }
     }

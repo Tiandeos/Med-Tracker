@@ -1,6 +1,8 @@
+use chrono::Weekday;
+
 pub struct Schedule {
-    pub time: [u32; 2],    // Hour, Minute
-    week_day: Vec<String>, // Available weekdays
+    pub time: [u32; 2],         // Hour, Minute
+    pub week_day: Vec<Weekday>, // Available weekdays
 }
 impl Schedule {
     pub fn new(time: [u32; 2]) -> Self {
