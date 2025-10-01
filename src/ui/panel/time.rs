@@ -98,11 +98,11 @@ impl TimeUI {
     }
     fn add_medication(&self, state: &mut State) {
         let medications_list: &mut Vec<Medication> = &mut state.medications;
-        let hour: u32 = self.medication_time_hour.parse().expect("Not a number");
-        let minute: u32 = self.medication_time_minute.parse().expect("Not a number");
-        let time: [u32; 2] = [hour, minute];
+        let hour: u8 = self.medication_time_hour.parse().expect("Not a number");
+        let minute: u8 = self.medication_time_minute.parse().expect("Not a number");
+        let time: [u8; 2] = [hour, minute];
         let mut medication: Medication = Medication::new(self.medication_name.clone(), 0);
-        let schedule: Schedule = Schedule::new(time);
+        let schedule: Schedule = Schedule::new(time, None, 0);
         medication.schedule.push(schedule);
         medications_list.push(medication);
     }

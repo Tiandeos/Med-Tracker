@@ -2,7 +2,7 @@ mod states;
 mod ui;
 mod update;
 
-use chrono::{Datelike, Local, Timelike};
+use chrono::{Datelike, Local, Timelike, Weekday};
 use iced::{self as ice, Subscription, time};
 use states::message::Message;
 use ui::view;
@@ -34,10 +34,12 @@ fn update(state: &mut App, message: Message) {
     }
 }
 fn check_medication_schedule(state: &mut State) {
-    let hour = Local::now().hour();
-    let minute = Local::now().minute();
-    let currentday = Local::now().weekday();
-    println!("Hour: {} Minute: {} Weekday: {}", hour, minute, currentday);
+    let month = Local::now().month() as u8;
+    let day = Local::now().day() as u8;
+    let hour = Local::now().hour() as u8;
+    let minute = Local::now().minute() as u8;
+
+    println!("Hour: {} Minute: {}", hour, minute);
     let medication_list: &mut Vec<Medication> = &mut state.medications;
     for medication in medication_list {
         println!("Medication Name:{}", medication.name);
@@ -48,13 +50,10 @@ fn check_medication_schedule(state: &mut State) {
                 continue;
             }
             let weekday_list = &schedule.week_day;
-            for weekday in weekday_list {
-                if *weekday == currentday {
-                    is_in_day = true;
-                    break;
-                } else {
-                    is_in_day = false;
-                }
+            if weekday_list.is_some() {
+                is_in_day = check_weekday(weekday_list.as_ref().unwrap());
+            } else {
+                is_in_day = true;
             }
             if is_in_day && hour >= schedule.time[0] && minute >= schedule.time[1] {
                 println!("Medication hour: {}", medication.schedule[0].time[0]);
@@ -62,6 +61,23 @@ fn check_medication_schedule(state: &mut State) {
         }
     }
 }
+fn check_weekday(weekday_list: &Vec<Weekday>) -> bool {
+    let mut is_in_day: bool = false;
+    if weekday_list.is_empty() {
+        return true;
+    }
+    let currentday = Local::now().weekday();
+    for weekday in weekday_list {
+        if *weekday == currentday {
+            is_in_day = true;
+            break;
+        } else {
+            is_in_day = false;
+        }
+    }
+    is_in_day
+}
+
 fn update_time(state: &App) -> Subscription<Message> {
     time::every(time::Duration::from_secs(1)).map(|_| Message::TimeCheck)
 }
