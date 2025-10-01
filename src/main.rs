@@ -44,6 +44,9 @@ fn check_medication_schedule(state: &mut State) {
     for medication in medication_list {
         println!("Medication Name:{}", medication.name);
         let schedule_list = &medication.schedule;
+        if schedule_list.is_empty() {
+            continue;
+        }
         let mut is_in_day = true;
         for schedule in schedule_list {
             if schedule.is_completed {
