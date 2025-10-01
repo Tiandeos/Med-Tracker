@@ -1,3 +1,5 @@
+use std::iter::Map;
+
 use chrono::{Datelike, Local};
 
 use crate::states::medication::medication::Medication;
@@ -9,7 +11,7 @@ pub struct State {
     pub panel: Panel,
     pub settings: Settings,
     pub medications: Vec<Medication>,
-    pub records: Vec<Record>,
+    pub records: Map<usize, Record>,
 }
 impl State {
     pub fn new() -> Self {
@@ -17,7 +19,7 @@ impl State {
             panel: Panel::Time,
             settings: Settings::new(),
             medications: Vec::new(),
-            records: Vec::new(),
+            records: Map,
         }
     }
     pub fn change_panel(&mut self, panel: &Panel) {
@@ -38,6 +40,9 @@ impl State {
                     .iter()
                     .position(|s| s.time == schedule.time)
                     .unwrap();
+                let weekday_list = &schedule.week_day;
+                if weekday_list.is_some() {}
+
                 let time: [u8; 5] = [
                     chrono::Local::now().year() as u8,
                     chrono::Local::now().month() as u8,
@@ -46,8 +51,12 @@ impl State {
                     schedule.time[1],
                 ];
                 let record: Record = Record::new(medication_index, schedule_index, time);
-                self.records.push(record);
+                self.records(record);
             }
         }
+    }
+    fn check_weekday() {}
+    pub fn clear_records(&mut self) {
+        self.records.clear();
     }
 }
