@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::iter::Map;
 
 use chrono::{Datelike, Local};
@@ -11,7 +12,7 @@ pub struct State {
     pub panel: Panel,
     pub settings: Settings,
     pub medications: Vec<Medication>,
-    pub records: Map<usize, Record>,
+    pub records: HashMap<usize, Record>,
 }
 impl State {
     pub fn new() -> Self {
@@ -19,7 +20,7 @@ impl State {
             panel: Panel::Time,
             settings: Settings::new(),
             medications: Vec::new(),
-            records: Map,
+            records: HashMap::new(),
         }
     }
     pub fn change_panel(&mut self, panel: &Panel) {
@@ -27,7 +28,9 @@ impl State {
     }
     pub fn set_records(&mut self) {
         let medications: &Vec<Medication> = &self.medications;
-
+        if medications.is_empty() {
+            return;
+        }
         for medication in medications {
             let medication_index = self
                 .medications
@@ -51,7 +54,7 @@ impl State {
                     schedule.time[1],
                 ];
                 let record: Record = Record::new(medication_index, schedule_index, time);
-                self.records(record);
+                self.records.insert(medication_index, record);
             }
         }
     }
