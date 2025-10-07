@@ -1,0 +1,56 @@
+use iced::{Subscription, time};
+
+use crate::states::{app::App, medication::medication::Medication, message::Message, state::State};
+use chrono::{Datelike, Local, Timelike, Weekday};
+
+pub fn update_time(state: &App) -> Subscription<Message> {
+    time::every(time::Duration::from_secs(1)).map(|_| Message::TimeCheck)
+}
+pub fn check_medication_schedule(state: &mut State) {
+    let month = Local::now().month() as u8;
+    let day = Local::now().day() as u8;
+    let hour = Local::now().hour() as u8;
+    let minute = Local::now().minute() as u8;
+
+    println!("Hour: {} Minute: {}", hour, minute);
+    let medication_list: &mut Vec<Medication> = &mut state.medications;
+    for medication in medication_list {
+        println!("Medication Name:{}", medication.name);
+        let schedule_list = &medication.schedule;
+        if schedule_list.is_empty() {
+            continue;
+        }
+        let mut is_in_day;
+        for schedule in schedule_list {
+            if schedule.is_completed {
+                continue;
+            }
+            let weekday_list = &schedule.week_day;
+            if weekday_list.is_some() {
+                is_in_day = check_weekday(weekday_list.as_ref().unwrap());
+            } else {
+                is_in_day = true;
+            }
+            if is_in_day && hour >= schedule.time[0] && minute >= schedule.time[1] {
+                println!("Medication hour: {}", medication.schedule[0].time[0]);
+            }
+        }
+    }
+}
+
+fn check_weekday(weekday_list: &Vec<Weekday>) -> bool {
+    let mut is_in_day: bool = false;
+    if weekday_list.is_empty() {
+        return true;
+    }
+    let currentday = Local::now().weekday();
+    for weekday in weekday_list {
+        if *weekday == currentday {
+            is_in_day = true;
+            break;
+        } else {
+            is_in_day = false;
+        }
+    }
+    is_in_day
+}
