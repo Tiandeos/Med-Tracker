@@ -3,7 +3,7 @@ mod ui;
 mod update;
 
 use chrono::{Datelike, Local, Timelike, Weekday};
-use iced::{self as ice, Subscription, time};
+use iced::{self as ice};
 use states::message::Message;
 use ui::view;
 
@@ -47,7 +47,7 @@ fn check_medication_schedule(state: &mut State) {
         if schedule_list.is_empty() {
             continue;
         }
-        let mut is_in_day = true;
+        let mut is_in_day;
         for schedule in schedule_list {
             if schedule.is_completed {
                 continue;

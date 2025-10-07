@@ -1,6 +1,5 @@
 use ice::widget::container::Style;
 use ice::{Background, Theme};
-use iced::border::bottom_right;
 use iced::{self as ice, Border};
 
 pub fn container_panel(theme: &Theme) -> Style {
