@@ -1,7 +1,6 @@
-use crate::states::app::App;
-use crate::states::medication::medication::Medication;
-use crate::states::medication::schedule::Schedule;
-use crate::states::state::State;
+use crate::application::medication::medication::Medication;
+use crate::application::medication::schedule::Schedule;
+use crate::application::states::state::State;
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
 use crate::ui::style::button::{bordered_button, close_button};

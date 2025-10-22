@@ -1,6 +1,6 @@
-use crate::states::app::App;
-use crate::states::message::Message;
-use crate::states::panel::Panel;
+use crate::application::app::App;
+use crate::application::message::Message;
+use crate::application::panel::Panel;
 use iced::widget::{column, container};
 use iced::{Element, Fill};
 

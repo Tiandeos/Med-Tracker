@@ -2,7 +2,7 @@ use ice::ContentFit;
 use ice::widget::{Image, button, container, row, text};
 use iced::{self as ice, Background, Element, Fill, Length, alignment};
 
-use crate::states::message::Message;
+use crate::application::message::Message;
 use crate::ui::macros;
 use crate::ui::style::button::navbar_button;
 

@@ -1,15 +1,15 @@
-mod states;
+mod application;
 mod ui;
 mod update;
 
+use application::message::Message;
 use iced::{self as ice};
-use states::message::Message;
 use ui::view;
 
-use crate::states::app::App;
+use crate::application::app::App;
 use crate::update::loadpanel::load_panel;
 use crate::update::time_check::{check_medication_schedule, update_time};
-use states::panel::Panel;
+use application::panel::Panel;
 
 fn main() {
     ice::application("Med Tracker", update, view::view)

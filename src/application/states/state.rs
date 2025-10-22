@@ -2,15 +2,12 @@ use std::collections::HashMap;
 
 use chrono::Datelike;
 
-use crate::states::medication::medication::Medication;
-use crate::states::medication::record::Record;
-use crate::states::medication::schedule::Schedule;
-use crate::states::medication::{self, schedule};
-use crate::states::panel::Panel;
-use crate::states::settings::Settings;
+use crate::application::medication::medication::Medication;
+use crate::application::medication::record::Record;
+use crate::application::medication::{self, schedule};
+use crate::application::panel::Panel;
 pub struct State {
     pub panel: Panel,
-    pub settings: Settings,
     pub medications: Vec<Medication>,
     pub records: HashMap<usize, Vec<Record>>,
 }
@@ -18,7 +15,6 @@ impl State {
     pub fn new() -> Self {
         State {
             panel: Panel::Time,
-            settings: Settings::new(),
             medications: Vec::new(),
             records: HashMap::new(),
         }

@@ -1,4 +1,4 @@
-use crate::states::medication::schedule::Schedule;
+use crate::application::medication::schedule::Schedule;
 
 pub struct Medication {
     pub id: String, // Unique ID of medication

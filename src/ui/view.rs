@@ -1,7 +1,7 @@
 use iced::{self as ice, Element, Length::Fill, Theme};
 
-use crate::states::app::App;
-use crate::states::message::Message;
+use crate::application::app::App;
+use crate::application::message::Message;
 use crate::ui::content::main_content;
 use crate::ui::sidebar::{side_bar, sidebar_border};
 use dark_light::Mode;
@@ -14,8 +14,8 @@ pub fn view(state: &App) -> Element<Message> {
         .into()
 }
 pub fn theme(state: &App) -> Theme {
-    if state.state.settings.is_theme_changed {
-        state.state.settings.theme.clone()
+    if state.settings.is_theme_changed {
+        state.settings.theme.clone()
     } else {
         detect_dark_light().unwrap_or(Theme::CatppuccinMocha)
     }

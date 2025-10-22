@@ -1,6 +1,8 @@
 use iced::{Subscription, time};
 
-use crate::states::{app::App, medication::medication::Medication, message::Message, state::State};
+use crate::application::{
+    app::App, medication::medication::Medication, message::Message, states::state::State,
+};
 use chrono::{Datelike, Local, Timelike, Weekday};
 
 pub fn update_time(state: &App) -> Subscription<Message> {
