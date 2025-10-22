@@ -4,8 +4,6 @@ use chrono::Weekday;
 pub struct Schedule {
     pub time: [u8; 2],                   // Hour, Minute
     pub week_day: Option<Vec<Weekday>>,  // Available weekdays
-    pub is_completed: bool, // Checks if schedule has been finished and doesnt need to be checked
-    pub is_skipped: bool, // Checks if this schedule skipped, sets completed true doesnt affect stocks.
     pub period_type: Option<PeriodType>, // Period type of medication
     pub period_time: u8,
 }
@@ -14,8 +12,6 @@ impl Schedule {
         Schedule {
             time,
             week_day: None,
-            is_completed: false,
-            is_skipped: false,
             period_type,
             period_time,
         }
