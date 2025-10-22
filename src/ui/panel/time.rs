@@ -1,6 +1,7 @@
 use crate::application::medication::medication::Medication;
 use crate::application::medication::schedule::Schedule;
-use crate::application::states::state::State;
+use crate::application::states::medicationtracker::MedicationTracker;
+use crate::application::states::state::{self, State};
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
 use crate::ui::style::button::{bordered_button, close_button};
@@ -31,7 +32,7 @@ impl TimeUI {
             Section::AddMedication => self.medication_add_panel(),
         }
     }
-    pub fn update(&mut self, state: &mut State, message: Message) {
+    pub fn update(&mut self, state: &mut MedicationTracker, message: Message) {
         match message {
             Message::OpenSection(Main) => self.section = Section::Main,
             Message::OpenSection(Section::AddMedication) => self.section = Section::AddMedication,
@@ -95,7 +96,7 @@ impl TimeUI {
         .width(Fill)
         .into()
     }
-    fn add_medication(&self, state: &mut State) {
+    fn add_medication(&self, state: &mut MedicationTracker) {
         let medications_list: &mut Vec<Medication> = &mut state.medications;
         let hour: u8 = self.medication_time_hour.parse().expect("Not a number");
         let minute: u8 = self.medication_time_minute.parse().expect("Not a number");

@@ -1,14 +1,20 @@
-use iced::{Subscription, time};
+use iced::{Application, Subscription, time};
 
 use crate::application::{
-    app::App, medication::medication::Medication, message::Message, states::state::State,
+    app::App,
+    medication::medication::Medication,
+    message::Message,
+    states::{
+        medicationtracker::{self, MedicationTracker},
+        state::State,
+    },
 };
 use chrono::{Datelike, Local, Timelike, Weekday};
 
 pub fn update_time(state: &App) -> Subscription<Message> {
     time::every(time::Duration::from_secs(1)).map(|_| Message::TimeCheck)
 }
-pub fn check_medication_schedule(state: &mut State) {
+pub fn check_medication_schedule(state: &mut MedicationTracker) {
     let month = Local::now().month() as u8;
     let day = Local::now().day() as u8;
     let hour = Local::now().hour() as u8;
