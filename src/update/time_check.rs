@@ -22,9 +22,6 @@ pub fn check_medication_schedule(state: &mut State) {
         }
         let mut is_in_day;
         for schedule in schedule_list {
-            if schedule.is_completed {
-                continue;
-            }
             let weekday_list = &schedule.week_day;
             if weekday_list.is_some() {
                 is_in_day = check_weekday(weekday_list.as_ref().unwrap());
