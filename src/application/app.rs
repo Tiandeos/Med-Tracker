@@ -1,3 +1,4 @@
+use super::states::medicationtracker::MedicationTracker;
 use super::states::settings::Settings;
 use super::states::state::State;
 use super::states::uistate::UIState;
@@ -5,6 +6,7 @@ pub struct App {
     pub uistate: UIState,
     pub state: State,
     pub settings: Settings,
+    pub medicationtracker: MedicationTracker,
 }
 impl Default for App {
     fn default() -> Self {
@@ -12,6 +14,7 @@ impl Default for App {
             state: State::new(),
             settings: Settings::new(),
             uistate: UIState::new(),
+            medicationtracker: MedicationTracker::new(),
         }
     }
 }
