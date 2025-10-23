@@ -24,7 +24,7 @@ pub fn check_medication_schedule(state: &mut MedicationTracker) {
     let medication_list: &mut Vec<Medication> = &mut state.medications;
     for medication in medication_list {
         println!("Medication Name:{}", medication.name);
-        let schedule_list = &medication.schedule;
+        let schedule_list = &medication.schedules;
         if schedule_list.is_empty() {
             continue;
         }
@@ -37,7 +37,7 @@ pub fn check_medication_schedule(state: &mut MedicationTracker) {
                 is_in_day = true;
             }
             if is_in_day && hour >= schedule.time[0] && minute >= schedule.time[1] {
-                println!("Medication hour: {}", medication.schedule[0].time[0]);
+                println!("Medication hour: {}", medication.schedules[0].time[0]);
             }
         }
     }

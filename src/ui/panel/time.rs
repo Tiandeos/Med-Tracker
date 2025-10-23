@@ -103,7 +103,7 @@ impl TimeUI {
         let time: [u8; 2] = [hour, minute];
         let mut medication: Medication = Medication::new(self.medication_name.clone(), 0);
         let schedule: Schedule = Schedule::new(time, None, 0);
-        medication.schedule.push(schedule);
+        medication.schedules.push(schedule);
         medications_list.push(medication);
     }
 }
