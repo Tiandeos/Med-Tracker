@@ -5,6 +5,7 @@ use iced::{self as ice, Background, Element, Fill, Length, alignment};
 use crate::application::message::Message;
 use crate::ui::macros;
 use crate::ui::style::button::navbar_button;
+use crate::ui::style::color::lighten;
 
 pub fn side_bar() -> Element<'static, Message> {
     container(
@@ -15,24 +16,33 @@ pub fn side_bar() -> Element<'static, Message> {
                 .on_press(Message::OpenTime)
                 .height(Length::FillPortion(1))
                 .width(Fill),
-            button(macros::button_with_icon_text!("Calendar", "icons/calendar.png"))
-                .style(navbar_button)
-                .padding(0)
-                .on_press(Message::OpenRecord)
-                .height(Length::FillPortion(1))
-                .width(Fill),
-            button(macros::button_with_icon_text!("Medications", "icons/pill.png"))
-                .style(navbar_button)
-                .padding(0)
-                .on_press(Message::OpenManageMeds)
-                .height(Length::FillPortion(1))
-                .width(Fill),
-            button(macros::button_with_icon_text!("Settings", "icons/settings.png"))
-                .style(navbar_button)
-                .padding(0)
-                .on_press(Message::OpenSettings)
-                .height(Length::FillPortion(1))
-                .width(Fill)
+            button(macros::button_with_icon_text!(
+                "Calendar",
+                "icons/calendar.png"
+            ))
+            .style(navbar_button)
+            .padding(0)
+            .on_press(Message::OpenRecord)
+            .height(Length::FillPortion(1))
+            .width(Fill),
+            button(macros::button_with_icon_text!(
+                "Medications",
+                "icons/pill.png"
+            ))
+            .style(navbar_button)
+            .padding(0)
+            .on_press(Message::OpenManageMeds)
+            .height(Length::FillPortion(1))
+            .width(Fill),
+            button(macros::button_with_icon_text!(
+                "Settings",
+                "icons/settings.png"
+            ))
+            .style(navbar_button)
+            .padding(0)
+            .on_press(Message::OpenSettings)
+            .height(Length::FillPortion(1))
+            .width(Fill)
         ]
         .spacing(1),
     )
@@ -43,7 +53,7 @@ pub fn side_bar() -> Element<'static, Message> {
 }
 pub fn sidebar_border() -> Element<'static, Message> {
     container("")
-        .width(3)
+        .width(1)
         .height(Fill)
         .style(sidebar_border_style)
         .into()
@@ -51,7 +61,10 @@ pub fn sidebar_border() -> Element<'static, Message> {
 fn sidebar_border_style(theme: &ice::Theme) -> container::Style {
     let palette = theme.extended_palette();
     container::Style {
-        background: Some(Background::Color(palette.background.weak.color)),
+        background: Some(Background::Color(lighten(
+            palette.background.base.color,
+            0.1,
+        ))),
         ..Default::default()
     }
 }
