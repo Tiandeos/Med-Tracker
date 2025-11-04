@@ -1,35 +1,28 @@
 use iced::Element;
 use iced::widget::button;
 
-pub struct Record
-{
+pub struct Record {
     section: Section,
 }
-impl Record
-{
-    pub fn new() -> Record
-    {
-        Self { section: Section::Record }
+impl Record {
+    pub fn new() -> Record {
+        Self {
+            section: Section::Main,
+        }
     }
-    pub fn view<'a>(&self) -> Element<'a,Message>
-    {
+    pub fn view<'a>(&self) -> Element<'a, Message> {
         button("b")
-        .on_press(Message::OpenSection(Section::Record))
-        .into()
+            .on_press(Message::OpenSection(Section::Main))
+            .into()
     }
-    pub fn update(&mut self, message: Message)
-    {
-
-    }
+    pub fn update(&mut self, message: Message) {}
 }
-#[derive(Debug,Clone)]
-pub enum Message
-{
+#[derive(Debug, Clone)]
+pub enum Message {
     OpenSection(Section),
     CloseSection,
 }
-#[derive(Debug,Clone)]
-pub enum Section
-{
-    Record,
+#[derive(Debug, Clone)]
+pub enum Section {
+    Main,
 }
