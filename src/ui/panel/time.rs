@@ -8,6 +8,7 @@ use crate::ui::style::container::container_panel;
 use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
+use iced::Length::FillPortion;
 use iced::{self as ice};
 
 pub struct TimeUI {
@@ -27,7 +28,9 @@ impl TimeUI {
     }
     pub fn view<'a>(&self) -> Element<'a, Message> {
         match self.section {
-            Section::Main => column![self.schedule_panel(), self.add_panel()].into(),
+            Section::Main => {
+                column![self.calendar_part(), self.main_part(), self.add_panel()].into()
+            }
             Section::AddMedication => self.medication_add_panel(),
         }
     }
@@ -41,6 +44,13 @@ impl TimeUI {
             Message::AddMedication => self.add_medication(state),
         }
     }
+    fn main_part<'a>(&self) -> Element<'a, Message> {
+        container(button("a"))
+            .width(Fill)
+            .height(FillPortion(6))
+            .center(Fill)
+            .into()
+    }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(
             button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
@@ -51,14 +61,14 @@ impl TimeUI {
         .height(Length::FillPortion(1))
         .into()
     }
-    fn schedule_panel<'a>(&self) -> Element<'a, Message> {
+    fn calendar_part<'a>(&self) -> Element<'a, Message> {
         container(
             button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
                 .style(bordered_button)
                 .on_press(Message::OpenSection(Section::AddMedication)),
         )
         .width(Fill)
-        .height(Length::FillPortion(6))
+        .height(Length::FillPortion(1))
         .into()
     }
     fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
