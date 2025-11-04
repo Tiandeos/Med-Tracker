@@ -21,7 +21,10 @@ fn main() {
 fn update(state: &mut App, message: Message) {
     match message {
         Message::TimeCheck => check_medication_schedule(&mut state.medicationtracker),
-        Message::OpenTime => load_panel(state, &Panel::Time),
+        Message::OpenTime => {
+            load_panel(state, &Panel::Time);
+            state.uistate.timeui.set_section_to_main();
+        }
         Message::OpenManageMeds => load_panel(state, &Panel::ManageMeds),
         Message::OpenRecord => load_panel(state, &Panel::Record),
         Message::OpenSettings => load_panel(state, &Panel::Settings),

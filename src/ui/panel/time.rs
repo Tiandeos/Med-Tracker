@@ -1,13 +1,12 @@
 use crate::application::medication::medication::Medication;
 use crate::application::medication::schedule::Schedule;
 use crate::application::states::medicationtracker::MedicationTracker;
-use crate::application::states::state::{self, State};
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
 use crate::ui::style::button::{bordered_button, close_button};
 use crate::ui::style::container::container_panel;
 use ice::Length::Fill;
-use ice::widget::{Image, button, column, container, row, scrollable, text, text_input};
+use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
 use iced::{self as ice};
 
@@ -105,6 +104,9 @@ impl TimeUI {
         let schedule: Schedule = Schedule::new(time, None, 0);
         medication.schedules.push(schedule);
         medications_list.push(medication);
+    }
+    pub fn set_section_to_main(&mut self) {
+        self.section = Section::Main;
     }
 }
 #[derive(Debug, Clone)]
