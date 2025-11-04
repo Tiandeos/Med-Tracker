@@ -8,7 +8,7 @@ use crate::ui::style::container::container_panel;
 use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
-use iced::Length::FillPortion;
+use iced::Length::{FillPortion, Shrink};
 use iced::{self as ice};
 
 pub struct TimeUI {
@@ -47,7 +47,7 @@ impl TimeUI {
     fn main_part<'a>(&self) -> Element<'a, Message> {
         container(button("a"))
             .width(Fill)
-            .height(FillPortion(6))
+            .height(Fill)
             .center(Fill)
             .into()
     }
@@ -58,7 +58,7 @@ impl TimeUI {
                 .on_press(Message::OpenSection(Section::AddMedication)),
         )
         .width(Fill)
-        .height(Length::FillPortion(1))
+        .height(Shrink)
         .into()
     }
     fn calendar_part<'a>(&self) -> Element<'a, Message> {
@@ -68,7 +68,7 @@ impl TimeUI {
                 .on_press(Message::OpenSection(Section::AddMedication)),
         )
         .width(Fill)
-        .height(Length::FillPortion(1))
+        .height(Shrink)
         .into()
     }
     fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
