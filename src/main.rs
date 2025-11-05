@@ -35,5 +35,7 @@ fn update(state: &mut App, message: Message) {
             .update(&mut state.medicationtracker, time),
         Message::Record(record) => state.uistate.recordui.update(record),
         Message::ManageMeds(managemeds) => state.uistate.managemedsui.update(managemeds),
+        Message::HideSidebar => println!("hide sidebar"),
+        Message::OpenSidebar => println!("open sidebar"),
     }
 }

@@ -10,4 +10,6 @@ pub enum Message {
     Record(record::Message),
     ManageMeds(managemeds::Message),
     TimeCheck,
+    HideSidebar,
+    OpenSidebar,
 }

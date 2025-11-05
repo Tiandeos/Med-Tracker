@@ -10,6 +10,12 @@ use crate::ui::style::color::lighten;
 pub fn side_bar() -> Element<'static, Message> {
     container(
         iced::widget::column![
+            button(macros::button_with_icon!("icons/hidepanel_icon.png"))
+                .style(navbar_button)
+                .padding(0)
+                .on_press(Message::HideSidebar)
+                .height(Length::Fixed(80.0))
+                .width(Fill),
             button(macros::button_with_icon_text!("Home", "icons/home.png"))
                 .style(navbar_button)
                 .padding(0)
@@ -47,7 +53,7 @@ pub fn side_bar() -> Element<'static, Message> {
         .spacing(1),
     )
     .style(sidebar_style)
-    .width(Length::Fixed(130.0))
+    .width(Length::Fixed(162.0))
     .height(Fill)
     .into()
 }
