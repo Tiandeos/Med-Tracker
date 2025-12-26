@@ -8,6 +8,16 @@ pub struct App {
     pub settings: Settings,
     pub medicationtracker: MedicationTracker,
 }
+impl App {
+    pub fn new() -> Self {
+        App {
+            state: State::new(),
+            settings: Settings::new(),
+            uistate: UIState::new(),
+            medicationtracker: MedicationTracker::new(),
+        }
+    }
+}
 impl Default for App {
     fn default() -> Self {
         App {

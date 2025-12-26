@@ -12,11 +12,15 @@ use crate::update::time_check::{check_medication_schedule, update_time};
 use application::panel::Panel;
 
 fn main() {
-    ice::application("Med Tracker", update, view::view)
+    ice::application(new, update, view::view)
         .theme(view::theme)
+        .centered()
         .subscription(update_time)
         .run()
         .expect("a");
+}
+fn new() -> App {
+    App::new()
 }
 fn update(state: &mut App, message: Message) {
     match message {
