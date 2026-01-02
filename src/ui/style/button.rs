@@ -54,7 +54,7 @@ fn bordered_button_size_radius(
         Status::Active => bordered_button_color(
             border_radius_size,
             border_width_size,
-            palette.primary.base.color,
+            palette.background.weak.color,
             palette.background.weak.color,
             text_color,
         ),
