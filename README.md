@@ -1,2 +1,5 @@
-A basic Medication Tracking application writen in rust/iced library.
-Currently work in progress not usable!
+# Med Tracker
+
+A basic Medication Tracking application for desktops writen in rust/iced library.
+
+*Currently work in progress and not usable.*!
