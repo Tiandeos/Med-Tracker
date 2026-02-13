@@ -2,6 +2,7 @@ use super::periodtype::PeriodType;
 use chrono::Weekday;
 
 pub struct Schedule {
+    pub id: String,                      // Unique uuid of schedule
     pub time: [u8; 2],                   // Hour, Minute
     pub week_day: Option<Vec<Weekday>>,  // Available weekdays
     pub period_type: Option<PeriodType>, // Period type of medication
@@ -12,6 +13,7 @@ impl Schedule {
         Schedule {
             time,
             week_day: None,
+            id: uuid::Uuid::new_v4().to_string(),
             period_type,
             period_time,
         }

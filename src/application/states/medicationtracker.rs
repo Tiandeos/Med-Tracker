@@ -4,13 +4,13 @@ use chrono::{DateTime, Utc};
 
 use crate::application::medication::{medication::Medication, record::Record};
 pub struct MedicationTracker {
-    pub record_by_time: HashMap<String, Vec<Record>>,
+    pub records: Vec<Record>,
     pub medications: Vec<Medication>,
 }
 impl MedicationTracker {
     pub fn new() -> Self {
         MedicationTracker {
-            record_by_time: HashMap::new(),
+            records: Vec::new(),
             medications: Vec::new(),
         }
     }
