@@ -49,7 +49,7 @@ impl Settingsui {
     pub fn update(&mut self, message: Message) {}
 }
 #[derive(Debug, Clone)]
-enum Section {
+pub enum Section {
     Main,
     Language,
     Theme,
