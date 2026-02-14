@@ -1,17 +1,17 @@
-use std::collections::HashMap;
-
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 
 use crate::application::medication::{medication::Medication, record::Record};
 pub struct MedicationTracker {
     pub records: Vec<Record>,
     pub medications: Vec<Medication>,
+    pub last_generation_date: Option<NaiveDate>,
 }
 impl MedicationTracker {
     pub fn new() -> Self {
         MedicationTracker {
             records: Vec::new(),
             medications: Vec::new(),
+            last_generation_date: None,
         }
     }
     pub fn generate_records(

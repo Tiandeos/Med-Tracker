@@ -9,10 +9,23 @@ use chrono::{Datelike, Local, Timelike, Weekday};
 pub fn update_time(state: &App) -> Subscription<Message> {
     time::every(time::Duration::from_secs(30)).map(|_| Message::TimeCheck)
 }
-pub fn check_medication_schedule(state: &mut MedicationTracker) {
+
+pub fn check_new_day(tracker: &mut MedicationTracker) {
+    let today = Local::now().date_naive();
+    let is_new_day = match tracker.last_generation_date {
+        Some(last_date) => today > last_date,
+        None => true,
+    };
+    if is_new_day {
+        tracker.last_generation_date = Some(today);
+        println!("New day detected: {today}. Records should be generated.");
+    }
+}
+
+pub fn check_medication_schedule(tracker: &mut MedicationTracker) {
     let now = Local::now();
     let current_minutes = now.hour() as u16 * 60 + now.minute() as u16;
-    let medication_list: &mut Vec<Medication> = &mut state.medications;
+    let medication_list: &mut Vec<Medication> = &mut tracker.medications;
     for medication in medication_list {
         let schedule_list = &medication.schedules;
         if schedule_list.is_empty() {

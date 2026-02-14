@@ -8,7 +8,7 @@ use ui::view;
 
 use crate::application::app::App;
 use crate::update::loadpanel::load_panel;
-use crate::update::time_check::{check_medication_schedule, update_time};
+use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
 use application::panel::Panel;
 
 fn main() {
@@ -24,7 +24,10 @@ fn new() -> App {
 }
 fn update(state: &mut App, message: Message) {
     match message {
-        Message::TimeCheck => check_medication_schedule(&mut state.medicationtracker),
+        Message::TimeCheck => {
+            check_new_day(&mut state.medicationtracker);
+            check_medication_schedule(&mut state.medicationtracker);
+        }
         Message::OpenTime => {
             load_panel(state, &Panel::Time);
             state.uistate.timeui.set_section_to_main();
