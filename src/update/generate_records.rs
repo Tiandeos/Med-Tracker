@@ -19,18 +19,16 @@ pub fn generate_future_records(tracker: &mut MedicationTracker) {
             } else {
                 generate_weekday_records(medication, schedule, today, end_date)
             };
-
+            for record in &new_records {
+                println!(
+                    "  Record: {} at {}",
+                    record.medication_id,
+                    record.time.with_timezone(&Local).format("%Y-%m-%d %H:%M")
+                );
+            }
             tracker.records.extend(new_records);
         }
     }
-    for record in &new_records {
-        println!(
-            "  Record: {} at {}",
-            record.medication_id,
-            record.time.with_timezone(&Local).format("%Y-%m-%d %H:%M")
-        );
-    }
-    println!("Record-Size: {}", tracker.records.len());
 }
 
 pub fn generate_records_for_medication(tracker: &mut MedicationTracker, medication_id: &str) {
