@@ -5,6 +5,7 @@ use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
 use crate::ui::style::button::{bordered_button, close_button};
 use crate::ui::style::container::container_panel;
+use crate::update::generate_records::generate_records_for_medication;
 use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
@@ -106,14 +107,15 @@ impl TimeUI {
         .into()
     }
     fn add_medication(&self, state: &mut MedicationTracker) {
-        let medications_list: &mut Vec<Medication> = &mut state.medications;
         let hour: u8 = self.medication_time_hour.parse().expect("Not a number");
         let minute: u8 = self.medication_time_minute.parse().expect("Not a number");
         let time: [u8; 2] = [hour, minute];
         let mut medication: Medication = Medication::new(self.medication_name.clone(), 0);
         let schedule: Schedule = Schedule::new(time, None, 0);
         medication.schedules.push(schedule);
-        medications_list.push(medication);
+        let medication_id = medication.id.clone();
+        state.medications.push(medication);
+        generate_records_for_medication(state, &medication_id);
     }
     pub fn set_section_to_main(&mut self) {
         self.section = Section::Main;

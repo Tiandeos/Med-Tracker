@@ -4,6 +4,7 @@ use crate::application::{
     app::App, medication::medication::Medication, message::Message,
     states::medicationtracker::MedicationTracker,
 };
+use crate::update::generate_records::generate_future_records;
 use chrono::{Datelike, Local, Timelike, Weekday};
 
 pub fn update_time(state: &App) -> Subscription<Message> {
@@ -18,7 +19,8 @@ pub fn check_new_day(tracker: &mut MedicationTracker) {
     };
     if is_new_day {
         tracker.last_generation_date = Some(today);
-        println!("New day detected: {today}. Records should be generated.");
+        generate_future_records(tracker);
+        println!("New day detected: {today}. Generated future records.");
     }
 }
 
