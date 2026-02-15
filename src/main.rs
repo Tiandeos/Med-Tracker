@@ -20,7 +20,9 @@ fn main() {
         .expect("a");
 }
 fn new() -> App {
-    App::new()
+    let mut app = App::new();
+    check_new_day(&mut app.medicationtracker);
+    app
 }
 fn update(state: &mut App, message: Message) {
     match message {
