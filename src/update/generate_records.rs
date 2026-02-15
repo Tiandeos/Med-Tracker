@@ -17,7 +17,7 @@ pub fn generate_future_records(tracker: &mut MedicationTracker) {
             let new_records = if schedule.period_type.is_some() {
                 generate_interval_records(medication, schedule, today, end_date, &tracker.records)
             } else {
-                generate_weekday_records(medication, schedule, today, end_date)
+                generate_weekday_records(medication, schedule, today, end_date, &tracker.records)
             };
             for record in &new_records {
                 println!(
@@ -43,7 +43,7 @@ pub fn generate_records_for_medication(tracker: &mut MedicationTracker, medicati
             let records = if schedule.period_type.is_some() {
                 generate_interval_records(medication, schedule, today, end_date, &tracker.records)
             } else {
-                generate_weekday_records(medication, schedule, today, end_date)
+                generate_weekday_records(medication, schedule, today, end_date, &tracker.records)
             };
             new_records.extend(records);
         }
@@ -64,6 +64,7 @@ fn generate_weekday_records(
     schedule: &Schedule,
     start_date: NaiveDate,
     end_date: NaiveDate,
+    existing_records: &[Record],
 ) -> Vec<Record> {
     println!("Entered Generate weedkay records");
     println!("Start-Date: {start_date} End-Date: {end_date}");
@@ -76,7 +77,9 @@ fn generate_weekday_records(
         };
         if day_matches {
             let record = create_record(medication, schedule, date);
-            records.push(record);
+            if !record_exists(existing_records, &record) {
+                records.push(record);
+            }
         }
         date = date
             .checked_add_days(Days::new(1))
@@ -104,7 +107,9 @@ fn generate_interval_records(
     let mut date = anchor_date;
     if date >= start_date && date <= end_date {
         let record = create_record(medication, schedule, date);
-        records.push(record);
+        if !record_exists(existing_records, &record) {
+            records.push(record);
+        }
     }
     // Step forward by intervals until we pass the end date
     loop {
@@ -114,7 +119,9 @@ fn generate_interval_records(
         }
         if date >= start_date {
             let record = create_record(medication, schedule, date);
-            records.push(record);
+            if !record_exists(existing_records, &record) {
+                records.push(record);
+            }
         }
     }
 
@@ -150,6 +157,14 @@ fn advance_by_period(date: NaiveDate, period_type: &PeriodType, interval: u8) ->
             .checked_add_months(Months::new(interval as u32))
             .expect("Date overflow in monthly advance"),
     }
+}
+
+fn record_exists(existing_records: &[Record], new_record: &Record) -> bool {
+    existing_records.iter().any(|r| {
+        r.medication_id == new_record.medication_id
+            && r.schedule_id == new_record.schedule_id
+            && r.time == new_record.time
+    })
 }
 
 fn create_record(medication: &Medication, schedule: &Schedule, date: NaiveDate) -> Record {
