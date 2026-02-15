@@ -102,6 +102,10 @@ fn generate_interval_records(
         .unwrap_or_else(|| medication.created_at.with_timezone(&Local).date_naive());
     let mut records = Vec::new();
     let mut date = anchor_date;
+    if date >= start_date && date <= end_date {
+        let record = create_record(medication, schedule, date);
+        records.push(record);
+    }
     // Step forward by intervals until we pass the end date
     loop {
         date = advance_by_period(date, period_type, interval);
