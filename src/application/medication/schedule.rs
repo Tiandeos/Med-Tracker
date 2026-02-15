@@ -7,15 +7,17 @@ pub struct Schedule {
     pub week_day: Option<Vec<Weekday>>,  // Available weekdays
     pub period_type: Option<PeriodType>, // Period type of medication
     pub period_time: u8,
+    pub dose: f32,
 }
 impl Schedule {
-    pub fn new(time: [u8; 2], period_type: Option<PeriodType>, period_time: u8) -> Self {
+    pub fn new(time: [u8; 2], period_type: Option<PeriodType>, period_time: u8, dose: f32) -> Self {
         Schedule {
             time,
             week_day: None,
             id: uuid::Uuid::new_v4().to_string(),
             period_type,
             period_time,
+            dose,
         }
     }
     pub fn set_period_type(&mut self, period_type: PeriodType) {
