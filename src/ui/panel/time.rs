@@ -8,6 +8,7 @@ use crate::ui::style;
 use crate::ui::style::button::{bordered_button, close_button};
 use crate::ui::style::container::container_panel;
 use crate::update::generate_records::generate_records_for_medication;
+use chrono::{Datelike, Duration, Local};
 use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
@@ -65,14 +66,24 @@ impl TimeUI {
         .into()
     }
     fn calendar_part<'a>(&self) -> Element<'a, Message> {
-        container(
-            button("a")
-                .style(style::time::button::time_button)
-                .on_press(Message::OpenSection(Section::AddMedication)),
-        )
-        .width(Fill)
-        .height(Shrink)
-        .into()
+        let today = Local::now().date_naive();
+        let mut days = row![].spacing(35);
+        for i in 0..8 {
+            let date = today + Duration::days(i);
+            let weekday = match date.weekday() {
+                chrono::Weekday::Mon => "Monday",
+                chrono::Weekday::Tue => "Tuesday",
+                chrono::Weekday::Wed => "Wednesday",
+                chrono::Weekday::Thu => "Thursday",
+                chrono::Weekday::Fri => "Friday",
+                chrono::Weekday::Sat => "Saturday",
+                chrono::Weekday::Sun => "Sunday",
+            };
+            let day_month = format!("{}/{}", date.day(), date.month());
+            let label = column![text(weekday).center(), text(day_month).center(),].spacing(50);
+            days = days.push(button(label).style(style::time::button::time_button));
+        }
+        container(days).center_x(Fill).height(Shrink).into()
     }
     fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
         container(column![
