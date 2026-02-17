@@ -58,10 +58,10 @@ impl TimeUI {
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(
             button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
-                .style(bordered_button)
+                .style(style::time::button::add_button)
                 .on_press(Message::OpenSection(Section::AddMedication)),
         )
-        .width(Fill)
+        .center_x(Fill)
         .height(Shrink)
         .into()
     }
@@ -81,7 +81,11 @@ impl TimeUI {
             };
             let day_month = format!("{}/{}", date.day(), date.month());
             let label = column![text(weekday).center(), text(day_month).center(),].spacing(50);
-            days = days.push(button(label).style(style::time::button::time_button));
+            days = days.push(
+                button(label)
+                    .style(style::time::button::calendar_button)
+                    .padding(20),
+            );
         }
         container(days).center_x(Fill).height(Shrink).into()
     }
