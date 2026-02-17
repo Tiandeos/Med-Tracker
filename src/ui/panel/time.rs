@@ -1,8 +1,10 @@
 use crate::application::medication::medication::Medication;
+use crate::application::medication::periodtype::PeriodType;
 use crate::application::medication::schedule::Schedule;
 use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
+use crate::ui::style;
 use crate::ui::style::button::{bordered_button, close_button};
 use crate::ui::style::container::container_panel;
 use crate::update::generate_records::generate_records_for_medication;
@@ -10,7 +12,7 @@ use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
 use iced::Length::{FillPortion, Shrink};
-use iced::{self as ice};
+use iced::{self as ice, border};
 
 pub struct TimeUI {
     section: Section,
@@ -64,8 +66,8 @@ impl TimeUI {
     }
     fn calendar_part<'a>(&self) -> Element<'a, Message> {
         container(
-            button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
-                .style(bordered_button)
+            button("a")
+                .style(style::time::button::time_button)
                 .on_press(Message::OpenSection(Section::AddMedication)),
         )
         .width(Fill)
@@ -110,8 +112,8 @@ impl TimeUI {
         let hour: u8 = self.medication_time_hour.parse().expect("Not a number");
         let minute: u8 = self.medication_time_minute.parse().expect("Not a number");
         let time: [u8; 2] = [hour, minute];
-        let mut medication: Medication = Medication::new(self.medication_name.clone(), 0);
-        let schedule: Schedule = Schedule::new(time, None, 0);
+        let mut medication: Medication = Medication::new(self.medication_name.clone(), 0.0);
+        let schedule: Schedule = Schedule::new(time, Some(PeriodType::Daily), 3, 1.0);
         medication.schedules.push(schedule);
         let medication_id = medication.id.clone();
         state.medications.push(medication);
