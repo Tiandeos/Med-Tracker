@@ -32,11 +32,14 @@ impl TimeUI {
             medication_time_minute: String::from(""),
         }
     }
-    pub fn view<'a>(&self) -> Element<'a, Message> {
+    pub fn view<'a>(&self, tracker: &MedicationTracker) -> Element<'a, Message> {
         match self.section {
-            Section::Main => {
-                column![self.calendar_part(), self.main_part(), self.add_panel()].into()
-            }
+            Section::Main => column![
+                self.calendar_part(),
+                self.main_part(tracker),
+                self.add_panel()
+            ]
+            .into(),
             Section::AddMedication => self.medication_add_panel(),
         }
     }
@@ -54,12 +57,12 @@ impl TimeUI {
             Message::AddMedication => self.add_medication(state),
         }
     }
-    fn main_part<'a>(&self) -> Element<'a, Message> {
         container(button("a"))
             .width(Fill)
             .height(Fill)
             .center(Fill)
             .into()
+    fn main_part<'a>(&self, tracker: &MedicationTracker) -> Element<'a, Message> {
     }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(

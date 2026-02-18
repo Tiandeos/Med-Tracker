@@ -7,7 +7,11 @@ use iced::{Element, Fill};
 pub fn main_content<'a>(state: &App) -> Element<'a, Message> {
     container(
         column![match &state.state.panel {
-            Panel::Time => state.uistate.timeui.view().map(Message::Time),
+            Panel::Time => state
+                .uistate
+                .timeui
+                .view(&state.medicationtracker)
+                .map(Message::Time),
             Panel::Record => state.uistate.recordui.view().map(Message::Record),
             Panel::ManageMeds => state.uistate.managemedsui.view().map(Message::ManageMeds),
             Panel::Settings => state.uistate.settingsui.view().map(Message::Settings),
