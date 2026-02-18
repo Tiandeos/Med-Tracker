@@ -1,5 +1,5 @@
 use iced::widget::button::{Status, Style};
-use iced::{Background, Border, Color, Theme};
+use iced::{Background, Border, Color, Shadow, Theme, Vector};
 
 pub fn calendar_button(theme: &Theme, status: Status) -> Style {
     let palette = theme.extended_palette();
@@ -27,6 +27,11 @@ pub fn calendar_button(theme: &Theme, status: Status) -> Style {
                 bottom_right: 60.0,
                 bottom_left: 60.0,
             },
+        },
+        shadow: Shadow {
+            color: Color::BLACK,
+            offset: Vector { x: 0.01, y: 4.0 },
+            blur_radius: 4.0,
         },
         text_color,
         ..Default::default()
@@ -60,6 +65,11 @@ pub fn add_button(theme: &Theme, status: Status) -> Style {
             },
         },
         text_color,
+        shadow: Shadow {
+            color: Color::BLACK,
+            offset: Vector { x: 0.01, y: 4.0 },
+            blur_radius: 4.0,
+        },
         ..Default::default()
     }
 }
