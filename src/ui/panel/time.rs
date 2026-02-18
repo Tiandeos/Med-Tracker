@@ -1,5 +1,6 @@
 use crate::application::medication::medication::Medication;
 use crate::application::medication::periodtype::PeriodType;
+use crate::application::medication::record::Record;
 use crate::application::medication::schedule::Schedule;
 use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::macros::{self, button_with_icon};
@@ -7,13 +8,15 @@ use crate::ui::panel::time::Section::Main;
 use crate::ui::style;
 use crate::ui::style::button::close_button;
 use crate::ui::style::container::container_panel;
+use crate::ui::style::time::container::schedule_container;
 use crate::update::generate_records::generate_records_for_medication;
-use chrono::{Datelike, Duration, Local, NaiveDate};
+use chrono::{Datelike, Duration, Local, NaiveDate, Timelike, Utc};
 use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, alignment};
 use iced::Length::{FillPortion, Shrink};
 use iced::{self as ice, Padding};
+use std::collections::BTreeMap;
 
 pub struct TimeUI {
     section: Section,
@@ -32,7 +35,7 @@ impl TimeUI {
             medication_time_minute: String::from(""),
         }
     }
-    pub fn view<'a>(&self, tracker: &MedicationTracker) -> Element<'a, Message> {
+    pub fn view<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
         match self.section {
             Section::Main => column![
                 self.calendar_part(),
@@ -57,12 +60,43 @@ impl TimeUI {
             Message::AddMedication => self.add_medication(state),
         }
     }
-        container(button("a"))
-            .width(Fill)
-            .height(Fill)
-            .center(Fill)
-            .into()
-    fn main_part<'a>(&self, tracker: &MedicationTracker) -> Element<'a, Message> {
+    fn main_part<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
+        let mut grouped: BTreeMap<(u32, u32), Vec<&Record>> = BTreeMap::new();
+        for record in &tracker.records {
+            if record.time.date_naive() != self.selected_date {
+                continue;
+            }
+            grouped
+                .entry((record.time.hour(), record.time.minute()))
+                .or_default()
+                .push(record);
+        }
+        let mut medications_container_list = column![].spacing(20);
+        for ((hour, minute), records) in &grouped {
+            let mut schedule_container_column = column![].spacing(20);
+            let hour_minute = format!("{:02}:{:02}", hour, minute);
+            let schedule_label = text(hour_minute).center();
+            schedule_container_column = schedule_container_column.push(schedule_label);
+            let mut medications_list = column![].spacing(10);
+            for record in records {
+                if let Some(med) = tracker
+                    .medications
+                    .iter()
+                    .find(|med| med.id == record.medication_id)
+                {
+                    let mut medication_labels = column![].spacing(5);
+                    let med_text = text(&med.name);
+                    let med_stock = text(&med.stock); // TODO: PLACEHOLDER CHANGE IT
+                    medication_labels = medication_labels.push(med_text);
+                    medication_labels = medication_labels.push(med_stock);
+                    medications_list = medications_list.push(medication_labels);
+                }
+            }
+            schedule_container_column = schedule_container_column.push(medications_list);
+            let schedule_container = container(schedule_container_column).style(schedule_container);
+            medications_container_list = medications_container_list.push(schedule_container);
+        }
+        medications_container_list.into()
     }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(

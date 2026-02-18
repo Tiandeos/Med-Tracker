@@ -4,7 +4,7 @@ use crate::application::panel::Panel;
 use iced::widget::{column, container};
 use iced::{Element, Fill};
 
-pub fn main_content<'a>(state: &App) -> Element<'a, Message> {
+pub fn main_content<'a>(state: &'a App) -> Element<'a, Message> {
     container(
         column![match &state.state.panel {
             Panel::Time => state
