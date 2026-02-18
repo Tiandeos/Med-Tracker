@@ -12,7 +12,7 @@ use crate::ui::style::time::container::schedule_container;
 use crate::update::generate_records::generate_records_for_medication;
 use chrono::{Datelike, Duration, Local, NaiveDate, Timelike, Utc};
 use ice::Length::Fill;
-use ice::widget::{Image, button, column, container, row, text, text_input};
+use ice::widget::{Image, button, column, container, row, scrollable, text, text_input};
 use ice::{ContentFit, Element, alignment};
 use iced::Length::{FillPortion, Shrink};
 use iced::font::Style;
@@ -102,9 +102,7 @@ impl TimeUI {
             let schedule_container = container(schedule_container_column).style(schedule_container);
             medications_container_list = medications_container_list.push(schedule_container);
         }
-        container(medications_container_list.max_width(750))
-            .center_x(Fill)
-            .into()
+        scrollable(container(medications_container_list.max_width(750)).center_x(Fill)).into()
     }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(
