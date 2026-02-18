@@ -13,7 +13,7 @@ use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, Length, alignment};
 use iced::Length::{FillPortion, Shrink};
-use iced::{self as ice, border};
+use iced::{self as ice, Padding, border};
 
 pub struct TimeUI {
     section: Section,
@@ -59,10 +59,12 @@ impl TimeUI {
         container(
             button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
                 .style(style::time::button::add_button)
+                .padding([20, 100])
                 .on_press(Message::OpenSection(Section::AddMedication)),
         )
         .center_x(Fill)
         .height(Shrink)
+        .padding(Padding::new(0.0).bottom(20))
         .into()
     }
     fn calendar_part<'a>(&self) -> Element<'a, Message> {
@@ -84,10 +86,14 @@ impl TimeUI {
             days = days.push(
                 button(label)
                     .style(style::time::button::calendar_button)
-                    .padding(20),
+                    .padding([20, 30])
+                    .width(FillPortion(1)),
             );
         }
-        container(days).center_x(Fill).height(Shrink).into()
+        container(container(days).max_width(1358).width(Fill))
+            .center_x(Fill)
+            .height(Shrink)
+            .into()
     }
     fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
         container(column![
