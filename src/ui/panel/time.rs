@@ -77,7 +77,7 @@ impl TimeUI {
             let hour_minute = format!("{:02}:{:02}", hour, minute);
             let schedule_label = text(hour_minute).center();
             schedule_container_column = schedule_container_column.push(schedule_label);
-            let mut medications_list = column![].spacing(10);
+            let mut medications_list = column![].spacing(10).padding(30);
             for record in records {
                 if let Some(med) = tracker
                     .medications
@@ -92,11 +92,15 @@ impl TimeUI {
                     medications_list = medications_list.push(medication_labels);
                 }
             }
-            schedule_container_column = schedule_container_column.push(medications_list);
+            schedule_container_column = schedule_container_column
+                .push(medications_list)
+                .width(FillPortion(1));
             let schedule_container = container(schedule_container_column).style(schedule_container);
             medications_container_list = medications_container_list.push(schedule_container);
         }
-        medications_container_list.into()
+        container(medications_container_list.max_width(750))
+            .center_x(Fill)
+            .into()
     }
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(
