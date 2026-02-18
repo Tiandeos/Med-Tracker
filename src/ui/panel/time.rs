@@ -5,18 +5,19 @@ use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::macros::{self, button_with_icon};
 use crate::ui::panel::time::Section::Main;
 use crate::ui::style;
-use crate::ui::style::button::{bordered_button, close_button};
+use crate::ui::style::button::close_button;
 use crate::ui::style::container::container_panel;
 use crate::update::generate_records::generate_records_for_medication;
-use chrono::{Datelike, Duration, Local};
+use chrono::{Datelike, Duration, Local, NaiveDate};
 use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
-use ice::{ContentFit, Element, Length, alignment};
+use ice::{ContentFit, Element, alignment};
 use iced::Length::{FillPortion, Shrink};
-use iced::{self as ice, Padding, border};
+use iced::{self as ice, Padding};
 
 pub struct TimeUI {
     section: Section,
+    pub selected_date: NaiveDate,
     medication_name: String,
     medication_time_hour: String,
     medication_time_minute: String,
@@ -25,6 +26,7 @@ impl TimeUI {
     pub fn new() -> TimeUI {
         Self {
             section: Main,
+            selected_date: Local::now().date_naive(),
             medication_name: String::from(""),
             medication_time_hour: String::from(""),
             medication_time_minute: String::from(""),
@@ -42,6 +44,10 @@ impl TimeUI {
         match message {
             Message::OpenSection(Main) => self.section = Section::Main,
             Message::OpenSection(Section::AddMedication) => self.section = Section::AddMedication,
+            Message::SelectDay(date) => {
+                self.selected_date = date;
+                println!("Current TimeUI Selected Date: {}", self.selected_date)
+            }
             Message::MedicationNameChange(content) => self.medication_name = content,
             Message::MedicationTimeHourChange(content) => self.medication_time_hour = content,
             Message::MedicationTimeMinuteChange(content) => self.medication_time_minute = content,
@@ -87,7 +93,8 @@ impl TimeUI {
                 button(label)
                     .style(style::time::button::calendar_button)
                     .padding([20, 30])
-                    .width(FillPortion(1)),
+                    .width(FillPortion(1))
+                    .on_press(Message::SelectDay(date)),
             );
         }
         container(container(days).max_width(1358).width(Fill))
@@ -152,6 +159,7 @@ pub enum Section {
 #[derive(Debug, Clone)]
 pub enum Message {
     OpenSection(Section),
+    SelectDay(NaiveDate),
     MedicationNameChange(String),
     MedicationTimeHourChange(String),
     MedicationTimeMinuteChange(String),
