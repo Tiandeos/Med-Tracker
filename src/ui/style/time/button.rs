@@ -10,10 +10,10 @@ pub fn calendar_button(theme: &Theme, status: Status) -> Style {
     };
 
     let background_color = match status {
-        Status::Active => palette.background.weak.color,
-        Status::Disabled => palette.background.strong.color,
-        Status::Hovered => palette.primary.strong.color,
-        Status::Pressed => palette.primary.weak.color,
+        Status::Active => palette.secondary.strong.color,
+        Status::Disabled => palette.secondary.base.color,
+        Status::Hovered => palette.secondary.base.color,
+        Status::Pressed => palette.secondary.weak.color,
     };
 
     Style {
@@ -41,10 +41,10 @@ pub fn add_button(theme: &Theme, status: Status) -> Style {
     };
 
     let background_color = match status {
-        Status::Active => palette.background.strong.color,
-        Status::Disabled => palette.background.strongest.color,
-        Status::Hovered => palette.primary.weak.color,
-        Status::Pressed => palette.primary.weak.color,
+        Status::Active => palette.secondary.strong.color,
+        Status::Disabled => palette.secondary.strong.color,
+        Status::Hovered => palette.secondary.base.color,
+        Status::Pressed => palette.secondary.weak.color,
     };
 
     Style {
