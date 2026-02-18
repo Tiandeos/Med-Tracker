@@ -15,7 +15,8 @@ use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, text, text_input};
 use ice::{ContentFit, Element, alignment};
 use iced::Length::{FillPortion, Shrink};
-use iced::{self as ice, Padding};
+use iced::font::Style;
+use iced::{self as ice, Color, Padding};
 use std::collections::BTreeMap;
 
 pub struct TimeUI {
@@ -39,7 +40,7 @@ impl TimeUI {
         match self.section {
             Section::Main => column![
                 self.calendar_part(),
-                self.main_part(tracker),
+                container(self.main_part(tracker)).height(Fill),
                 self.add_panel()
             ]
             .into(),
@@ -67,17 +68,20 @@ impl TimeUI {
                 continue;
             }
             grouped
-                .entry((record.time.hour(), record.time.minute()))
+                .entry((
+                    record.time.with_timezone(&Local).hour(),
+                    record.time.with_timezone(&Local).minute(),
+                ))
                 .or_default()
                 .push(record);
         }
         let mut medications_container_list = column![].spacing(20);
         for ((hour, minute), records) in &grouped {
-            let mut schedule_container_column = column![].spacing(20);
+            let mut schedule_container_column = column![].padding([20, 40]).spacing(20);
             let hour_minute = format!("{:02}:{:02}", hour, minute);
-            let schedule_label = text(hour_minute).center();
+            let schedule_label = text(hour_minute).size(32).center();
             schedule_container_column = schedule_container_column.push(schedule_label);
-            let mut medications_list = column![].spacing(10).padding(30);
+            let mut medications_list = column![].spacing(10).padding([0, 20]);
             for record in records {
                 if let Some(med) = tracker
                     .medications
@@ -85,8 +89,8 @@ impl TimeUI {
                     .find(|med| med.id == record.medication_id)
                 {
                     let mut medication_labels = column![].spacing(5);
-                    let med_text = text(&med.name);
-                    let med_stock = text(&med.stock); // TODO: PLACEHOLDER CHANGE IT
+                    let med_text = text(&med.name).size(22);
+                    let med_stock = text(&med.stock).size(16); // TODO: PLACEHOLDER CHANGE IT
                     medication_labels = medication_labels.push(med_text);
                     medication_labels = medication_labels.push(med_stock);
                     medications_list = medications_list.push(medication_labels);
@@ -141,6 +145,7 @@ impl TimeUI {
         container(container(days).max_width(1358).width(Fill))
             .center_x(Fill)
             .height(Shrink)
+            .padding(Padding::new(0.0).bottom(20))
             .into()
     }
     fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
