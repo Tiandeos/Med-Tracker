@@ -1,4 +1,5 @@
 use crate::application::medication::medication::Medication;
+use crate::application::medication::occurrencestatus::OccurrenceStatus;
 use crate::application::medication::periodtype::PeriodType;
 use crate::application::medication::record::Record;
 use crate::application::medication::schedule::Schedule;
@@ -8,7 +9,7 @@ use crate::ui::panel::time::Section::Main;
 use crate::ui::style;
 use crate::ui::style::button::close_button;
 use crate::ui::style::container::container_panel;
-use crate::ui::style::time::container::schedule_container;
+use crate::ui::style::time::container::{record_status_container, schedule_container};
 use crate::update::generate_records::generate_records_for_medication;
 use chrono::{Datelike, Duration, Local, NaiveDate, Timelike, Utc};
 use ice::Length::Fill;
@@ -58,6 +59,9 @@ impl TimeUI {
             Message::MedicationTimeHourChange(content) => self.medication_time_hour = content,
             Message::MedicationTimeMinuteChange(content) => self.medication_time_minute = content,
             Message::AddMedication => self.add_medication(state),
+            Message::MarkTaken(_id) => {}
+            Message::MarkSkipped(_id) => {}
+            Message::MarkPostponed(_id) => {}
         }
     }
     fn main_part<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
@@ -87,12 +91,51 @@ impl TimeUI {
                     .iter()
                     .find(|med| med.id == record.medication_id)
                 {
-                    let mut medication_labels = column![].spacing(5);
-                    let med_text = text(&med.name).size(22);
-                    let med_stock = text(&med.stock).size(16); // TODO: PLACEHOLDER CHANGE IT
-                    medication_labels = medication_labels.push(med_text);
-                    medication_labels = medication_labels.push(med_stock);
-                    medications_list = medications_list.push(medication_labels);
+                    let status_icon: Element<'a, Message> = match &record.occurrence_status {
+                        OccurrenceStatus::Taken { .. } => {
+                            Image::new("icons/icons8-complete-50.png")
+                                .content_fit(ContentFit::Cover)
+                                .width(42)
+                                .height(42)
+                                .into()
+                        }
+                        OccurrenceStatus::Skipped { .. } | OccurrenceStatus::Missed => {
+                            Image::new("icons/icons8-cross-50.png")
+                                .content_fit(ContentFit::Cover)
+                                .width(42)
+                                .height(42)
+                                .into()
+                        }
+                        OccurrenceStatus::Pending => column![].width(42).height(42).into(),
+                    };
+                    let status_container = container(status_icon).style(record_status_container);
+                    let medication_info = column![
+                        text(&med.name).size(22),
+                        text(&med.stock).size(16), // TODO: PLACEHOLDER CHANGE IT
+                    ]
+                    .spacing(5)
+                    .width(Fill);
+                    let action_buttons = row![
+                        button(button_with_icon!("icons/icons8-complete-50.png"))
+                            .style(style::time::button::record_action_button)
+                            .padding(10)
+                            .on_press(Message::MarkTaken(record.id.clone())),
+                        button(button_with_icon!("icons/icons8-cross-50.png"))
+                            .style(style::time::button::record_action_button)
+                            .padding(10)
+                            .on_press(Message::MarkSkipped(record.id.clone())),
+                        button(button_with_icon!("icons/icons8-clock-50.png"))
+                            .style(style::time::button::record_action_button)
+                            .padding(10)
+                            .on_press(Message::MarkPostponed(record.id.clone())),
+                    ]
+                    .spacing(30)
+                    .align_y(alignment::Vertical::Center);
+                    let medication_row = row![status_container, medication_info, action_buttons]
+                        .align_y(alignment::Vertical::Center)
+                        .spacing(20);
+
+                    medications_list = medications_list.push(medication_row);
                 }
             }
             schedule_container_column = schedule_container_column
@@ -208,4 +251,7 @@ pub enum Message {
     MedicationTimeHourChange(String),
     MedicationTimeMinuteChange(String),
     AddMedication,
+    MarkTaken(String),
+    MarkSkipped(String),
+    MarkPostponed(String),
 }
