@@ -15,8 +15,7 @@ use ice::Length::Fill;
 use ice::widget::{Image, button, column, container, row, scrollable, text, text_input};
 use ice::{ContentFit, Element, alignment};
 use iced::Length::{FillPortion, Shrink};
-use iced::font::Style;
-use iced::{self as ice, Color, Padding};
+use iced::{self as ice, Padding};
 use std::collections::BTreeMap;
 
 pub struct TimeUI {
@@ -132,9 +131,10 @@ impl TimeUI {
             };
             let day_month = format!("{}/{}", date.day(), date.month());
             let label = column![text(weekday).center(), text(day_month).center(),].spacing(50);
+            let is_selected = date == self.selected_date;
             days = days.push(
                 button(label)
-                    .style(style::time::button::calendar_button)
+                    .style(style::time::button::calendar_button(is_selected))
                     .padding([20, 30])
                     .width(FillPortion(1))
                     .on_press(Message::SelectDay(date)),
