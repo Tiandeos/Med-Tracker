@@ -12,14 +12,14 @@ macro_rules! button_with_icon_text{
     };
 }
 macro_rules! button_with_icon{
-($icon_path:expr) => {
+($icon_path:expr, $size:expr, $spacing:expr) => {
         container(
             row![
                 Image::new($icon_path)
                     .content_fit(ContentFit::Cover)
-                    .width(20)
-                    .height(20),
-            ].spacing(10).align_y(alignment::Vertical::Center)
+                    .width($size)
+                    .height($size),
+            ].spacing($spacing).align_y(alignment::Vertical::Center)
         ).align_y(alignment::Vertical::Center)
     };
 }

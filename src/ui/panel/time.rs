@@ -84,7 +84,7 @@ impl TimeUI {
             let mut schedule_container_column = column![].padding([20, 40]).spacing(20);
             let hour_minute = format!("{:02}:{:02}", hour, minute);
             let schedule_label = text(hour_minute).size(32).width(Fill);
-            let sound_button = button(button_with_icon!("icons/icons8-sound-50.png"))
+            let sound_button = button(button_with_icon!("icons/icons8-sound-50.png", 32, 10))
                 .style(style::time::button::record_action_button)
                 .padding(10)
                 .on_press(Message::ToggleSound(*hour, *minute));
@@ -123,15 +123,15 @@ impl TimeUI {
                     .spacing(5)
                     .width(Fill);
                     let action_buttons = row![
-                        button(button_with_icon!("icons/icons8-complete-50.png"))
+                        button(button_with_icon!("icons/icons8-complete-50.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press(Message::MarkTaken(record.id.clone())),
-                        button(button_with_icon!("icons/icons8-cross-50.png"))
+                        button(button_with_icon!("icons/icons8-cross-50.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press(Message::MarkSkipped(record.id.clone())),
-                        button(button_with_icon!("icons/icons8-clock-50.png"))
+                        button(button_with_icon!("icons/icons8-clock-50.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press(Message::MarkPostponed(record.id.clone())),
@@ -199,7 +199,7 @@ impl TimeUI {
     fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
         container(column![
             row![
-                button(button_with_icon!("icons/plus.png"))
+                button(button_with_icon!("icons/plus.png", 30, 10))
                     .on_press(Message::OpenSection(Section::Main))
                     .style(close_button)
             ]
