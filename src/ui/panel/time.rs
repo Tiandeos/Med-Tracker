@@ -62,6 +62,7 @@ impl TimeUI {
             Message::MarkTaken(_id) => {}
             Message::MarkSkipped(_id) => {}
             Message::MarkPostponed(_id) => {}
+            Message::ToggleSound(_hour, _minute) => {}
         }
     }
     fn main_part<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
@@ -82,8 +83,14 @@ impl TimeUI {
         for ((hour, minute), records) in &grouped {
             let mut schedule_container_column = column![].padding([20, 40]).spacing(20);
             let hour_minute = format!("{:02}:{:02}", hour, minute);
-            let schedule_label = text(hour_minute).size(32).center();
-            schedule_container_column = schedule_container_column.push(schedule_label);
+            let schedule_label = text(hour_minute).size(32).width(Fill);
+            let sound_button = button(button_with_icon!("icons/icons8-sound-50.png"))
+                .style(style::time::button::record_action_button)
+                .padding(10)
+                .on_press(Message::ToggleSound(*hour, *minute));
+            let schedule_header =
+                row![schedule_label, sound_button].align_y(alignment::Vertical::Center);
+            schedule_container_column = schedule_container_column.push(schedule_header);
             let mut medications_list = column![].spacing(10).padding([0, 20]);
             for record in records {
                 if let Some(med) = tracker
@@ -254,4 +261,5 @@ pub enum Message {
     MarkTaken(String),
     MarkSkipped(String),
     MarkPostponed(String),
+    ToggleSound(u32, u32),
 }
