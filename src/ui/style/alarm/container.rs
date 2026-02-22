@@ -9,18 +9,25 @@ pub fn alarm_panel_container(theme: &Theme) -> Style {
         border: Border {
             color: Color::BLACK,
             width: 1.0,
-            radius: ice::border::Radius {
-                top_left: 45.0,
-                top_right: 45.0,
-                bottom_left: 45.0,
-                bottom_right: 45.0,
-            },
-            ..Default::default()
+            radius: ice::border::Radius::from(45.0),
         },
         shadow: Shadow {
             color: Color::BLACK,
             offset: Vector { x: 0.0, y: 4.0 },
             blur_radius: 8.0,
+        },
+        ..Default::default()
+    }
+}
+
+pub fn medication_item_container(theme: &Theme) -> Style {
+    let palette = theme.extended_palette();
+    Style {
+        background: Some(Background::Color(palette.background.weak.color)),
+        border: Border {
+            color: Color::BLACK,
+            width: 1.0,
+            radius: ice::border::Radius::from(35.0),
         },
         ..Default::default()
     }

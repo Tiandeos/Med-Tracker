@@ -1,7 +1,7 @@
 use crate::application::medication::record::Record;
 use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::style::alarm::button::{alarm_action_button, alarm_take_button};
-use crate::ui::style::alarm::container::alarm_panel_container;
+use crate::ui::style::alarm::container::{alarm_panel_container, medication_item_container};
 use ice::widget::{button, column, container, row, scrollable, text};
 use ice::{Element, Length};
 use iced as ice;
@@ -115,6 +115,7 @@ impl AlarmUI {
                 )
                 .center_x(Length::Fill),
             ]
+            .max_width(500)
             .spacing(25)
             .width(Length::Fill),
         ]
@@ -129,28 +130,91 @@ impl AlarmUI {
         tracker: &'a MedicationTracker,
         records: &[&'a Record],
     ) -> Element<'a, Message> {
-        let mut records_list = column![].spacing(10);
+        let schedule_time_text = if let Some(first_record) = records.first() {
+            let time = first_record.time.format("%H:%M").to_string();
+            format!("{} - Medication", time)
+        } else {
+            String::from("Medication")
+        };
+        let count = records.len();
+        let header_text = format!("{} Medications", count);
+        let mut records_list = column![].spacing(20);
         for record in records {
-            let med_name = tracker
+            let medication = tracker
                 .medications
                 .iter()
-                .find(|m| m.id == record.medication_id)
-                .map(|m| m.name.as_str())
-                .unwrap_or("Unknown");
+                .find(|m| m.id == record.medication_id);
 
-            let record_row = row![
-                text(med_name).width(Length::Fill),
-                button(text("Take")).on_press(Message::MarkTaken(record.id.clone())),
-                button(text("Skip")).on_press(Message::MarkSkipped(record.id.clone())),
-                button(text("Reschedule")).on_press(Message::MarkRescheduled(record.id.clone())),
-            ]
-            .spacing(10)
-            .align_y(ice::alignment::Vertical::Center);
+            let med_name = medication.map(|m| m.name.as_str()).unwrap_or("Unknown");
+            let schedule = medication
+                .and_then(|med| med.schedules.iter().find(|s| s.id == record.schedule_id));
+            let dose = schedule.map(|s| s.dose).unwrap_or(0.0);
+            let medication_container = container(
+                row![
+                    column![
+                        text(med_name).size(22),
+                        text(format!("{} mg", dose)).size(16),
+                    ]
+                    .spacing(10),
+                    row![
+                        button(
+                            container(text("Take Now"))
+                                .center_x(Length::Fill)
+                                .center_y(Length::Fill)
+                                .padding(10)
+                        )
+                        .style(alarm_take_button)
+                        .on_press(Message::MarkTaken(record.id.clone())),
+                        button(
+                            container(text("Skip"))
+                                .center_x(Length::Fill)
+                                .center_y(Length::Fill)
+                                .padding(10)
+                        )
+                        .style(alarm_action_button)
+                        .on_press(Message::MarkSkipped(record.id.clone())),
+                    ]
+                    .spacing(10),
+                ]
+                .spacing(30)
+                .align_y(ice::alignment::Vertical::Center)
+                .padding(40),
+            )
+            .style(medication_item_container);
 
-            records_list = records_list.push(record_row);
+            records_list = records_list.push(medication_container);
         }
-
-        scrollable(records_list).height(Length::Fill).into()
+        column![
+            container(
+                text(schedule_time_text)
+                    .size(24)
+                    .style(|theme: &ice::Theme| {
+                        let palette = theme.extended_palette();
+                        ice::widget::text::Style {
+                            color: Some(palette.background.strong.text),
+                        }
+                    })
+            )
+            .padding(ice::Padding {
+                top: 35.0,
+                right: 0.0,
+                bottom: 25.0,
+                left: 0.0
+            })
+            .center_x(Length::Fill),
+            container(text(header_text).size(32))
+                .center_x(Length::Fill)
+                .padding(ice::Padding {
+                    top: 0.0,
+                    right: 0.0,
+                    bottom: 20.0,
+                    left: 0.0
+                }),
+            scrollable(records_list).height(Length::Fill),
+        ]
+        .width(Length::Fill)
+        .height(Length::Fill)
+        .into()
     }
 
     pub fn update(&mut self, tracker: &mut MedicationTracker, message: Message) {
