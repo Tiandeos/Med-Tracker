@@ -3,11 +3,14 @@ use ice::widget::{Image, button, container, row, text};
 use iced::{self as ice, Background, Element, Fill, Length, alignment};
 
 use crate::application::message::Message;
+use crate::application::panel::Panel;
 use crate::ui::macros;
 use crate::ui::style::button::navbar_button;
 use crate::ui::style::color::lighten;
 
-pub fn side_bar() -> Element<'static, Message> {
+pub fn side_bar(current_panel: &Panel) -> Element<'static, Message> {
+    let is_alarm = matches!(current_panel, Panel::Alarm);
+
     container(
         iced::widget::column![
             button(macros::button_with_icon!(
@@ -17,13 +20,21 @@ pub fn side_bar() -> Element<'static, Message> {
             ))
             .style(navbar_button)
             .padding(0)
-            .on_press(Message::HideSidebar)
+            .on_press_maybe(if is_alarm {
+                None
+            } else {
+                Some(Message::HideSidebar)
+            })
             .height(Length::Fixed(80.0))
             .width(Fill),
             button(macros::button_with_icon_text!("Home", "icons/home.png"))
                 .style(navbar_button)
                 .padding(0)
-                .on_press(Message::OpenTime)
+                .on_press_maybe(if is_alarm {
+                    None
+                } else {
+                    Some(Message::OpenTime)
+                })
                 .height(Length::FillPortion(1))
                 .width(Fill),
             button(macros::button_with_icon_text!(
@@ -32,7 +43,11 @@ pub fn side_bar() -> Element<'static, Message> {
             ))
             .style(navbar_button)
             .padding(0)
-            .on_press(Message::OpenRecord)
+            .on_press_maybe(if is_alarm {
+                None
+            } else {
+                Some(Message::OpenRecord)
+            })
             .height(Length::FillPortion(1))
             .width(Fill),
             button(macros::button_with_icon_text!(
@@ -41,7 +56,11 @@ pub fn side_bar() -> Element<'static, Message> {
             ))
             .style(navbar_button)
             .padding(0)
-            .on_press(Message::OpenManageMeds)
+            .on_press_maybe(if is_alarm {
+                None
+            } else {
+                Some(Message::OpenManageMeds)
+            })
             .height(Length::FillPortion(1))
             .width(Fill),
             button(macros::button_with_icon_text!(
@@ -50,7 +69,11 @@ pub fn side_bar() -> Element<'static, Message> {
             ))
             .style(navbar_button)
             .padding(0)
-            .on_press(Message::OpenSettings)
+            .on_press_maybe(if is_alarm {
+                None
+            } else {
+                Some(Message::OpenSettings)
+            })
             .height(Length::FillPortion(1))
             .width(Fill)
         ]

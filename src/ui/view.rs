@@ -8,10 +8,14 @@ use dark_light::Mode;
 use ice::widget::row;
 
 pub fn view(state: &App) -> Element<Message> {
-    row![side_bar(), sidebar_border(), main_content(state),]
-        .width(Fill)
-        .height(Fill)
-        .into()
+    row![
+        side_bar(&state.state.panel),
+        sidebar_border(),
+        main_content(state),
+    ]
+    .width(Fill)
+    .height(Fill)
+    .into()
 }
 pub fn theme(state: &App) -> Theme {
     if state.settings.is_theme_changed {
