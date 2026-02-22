@@ -43,7 +43,7 @@ pub fn check_medication_schedule(tracker: &MedicationTracker) -> Vec<String> {
         }
         let diff = now.signed_duration_since(record.time);
         let elapsed = diff.num_minutes();
-        if elapsed <= alarm_window {
+        if elapsed >= 0 && elapsed <= alarm_window {
             alarming_records.push(record.id.clone());
         }
     }
