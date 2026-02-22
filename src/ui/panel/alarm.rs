@@ -1,5 +1,6 @@
 use crate::application::medication::record::Record;
 use crate::application::states::medicationtracker::MedicationTracker;
+use crate::ui::style::alarm::button::{alarm_action_button, alarm_take_button};
 use crate::ui::style::alarm::container::alarm_panel_container;
 use ice::widget::{button, column, container, row, scrollable, text};
 use ice::{Element, Length};
@@ -83,15 +84,34 @@ impl AlarmUI {
             .align_x(ice::alignment::Horizontal::Center),
             container("").height(Length::Fill),
             column![
-                button(text("Take Medication"))
-                    .width(Length::Fill)
-                    .on_press(Message::MarkTaken(record.id.clone())),
-                button(text("Skipped"))
-                    .width(Length::Fill)
-                    .on_press(Message::MarkSkipped(record.id.clone())),
+                button(
+                    container(text("Take Medication"))
+                        .center_x(Length::Fill)
+                        .center_y(Length::Fill)
+                )
+                .style(alarm_take_button)
+                .width(Length::Fill)
+                .height(Length::FillPortion(1))
+                .on_press(Message::MarkTaken(record.id.clone())),
+                button(
+                    container(text("Skipped"))
+                        .center_x(Length::Fill)
+                        .center_y(Length::Fill)
+                )
+                .style(alarm_action_button)
+                .width(Length::Fill)
+                .height(Length::FillPortion(1))
+                .on_press(Message::MarkSkipped(record.id.clone())),
                 container(
-                    button(text("Reschedule"))
-                        .on_press(Message::MarkRescheduled(record.id.clone()))
+                    button(
+                        container(text("Reschedule"))
+                            .center_x(Length::Fill)
+                            .center_y(Length::Fill)
+                    )
+                    .style(alarm_action_button)
+                    .width(Length::Shrink)
+                    .height(Length::FillPortion(1))
+                    .on_press(Message::MarkRescheduled(record.id.clone()))
                 )
                 .center_x(Length::Fill),
             ]
