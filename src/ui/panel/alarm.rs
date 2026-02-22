@@ -29,8 +29,6 @@ impl AlarmUI {
         } else {
             self.multiple_records_content(tracker, &records)
         };
-
-        // Outer container centers the alarm panel in the available space
         container(
             container(inner)
                 .max_width(1000)
@@ -49,23 +47,57 @@ impl AlarmUI {
         tracker: &'a MedicationTracker,
         record: &'a Record,
     ) -> Element<'a, Message> {
-        let med_name = tracker
+        let medication = tracker
             .medications
             .iter()
-            .find(|m| m.id == record.medication_id)
-            .map(|m| m.name.as_str())
-            .unwrap_or("Unknown");
-
+            .find(|m| m.id == record.medication_id);
+        let med_name = medication.map(|m| m.name.as_str()).unwrap_or("Unknown");
+        let schedule =
+            medication.and_then(|med| med.schedules.iter().find(|s| s.id == record.schedule_id));
+        let dose = schedule.map(|s| s.dose).unwrap_or(0.0);
+        let time = record.time.format("%H:%M").to_string();
+        let schedule_time_text = format!("{} - Medication", time);
         column![
-            text(med_name).size(48),
-            row![
-                button(text("Take")).on_press(Message::MarkTaken(record.id.clone())),
-                button(text("Skip")).on_press(Message::MarkSkipped(record.id.clone())),
-                button(text("Reschedule")).on_press(Message::MarkRescheduled(record.id.clone())),
+            container(
+                text(schedule_time_text)
+                    .size(24)
+                    .style(|theme: &ice::Theme| {
+                        let palette = theme.extended_palette();
+                        ice::widget::text::Style {
+                            color: Some(palette.background.strong.text),
+                        }
+                    })
+            )
+            .padding(ice::Padding {
+                top: 35.0,
+                right: 0.0,
+                bottom: 25.0,
+                left: 0.0
+            })
+            .center_x(Length::Fill),
+            column![
+                text(med_name).size(32),
+                text(format!("{} mg", dose)).size(16),
             ]
             .spacing(20)
+            .align_x(ice::alignment::Horizontal::Center),
+            container("").height(Length::Fill),
+            column![
+                button(text("Take Medication"))
+                    .width(Length::Fill)
+                    .on_press(Message::MarkTaken(record.id.clone())),
+                button(text("Skipped"))
+                    .width(Length::Fill)
+                    .on_press(Message::MarkSkipped(record.id.clone())),
+                container(
+                    button(text("Reschedule"))
+                        .on_press(Message::MarkRescheduled(record.id.clone()))
+                )
+                .center_x(Length::Fill),
+            ]
+            .spacing(25)
+            .width(Length::Fill),
         ]
-        .spacing(40)
         .align_x(ice::alignment::Horizontal::Center)
         .width(Length::Fill)
         .height(Length::Fill)
