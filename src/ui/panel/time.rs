@@ -68,7 +68,7 @@ impl TimeUI {
     fn main_part<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
         let mut grouped: BTreeMap<(u32, u32), Vec<&Record>> = BTreeMap::new();
         for record in &tracker.records {
-            if record.time.date_naive() != self.selected_date {
+            if record.time.with_timezone(&Local).date_naive() != self.selected_date {
                 continue;
             }
             grouped
