@@ -28,7 +28,13 @@ fn update(state: &mut App, message: Message) {
     match message {
         Message::TimeCheck => {
             check_new_day(&mut state.medicationtracker);
-            check_medication_schedule(&mut state.medicationtracker);
+            let alarming_records = check_medication_schedule(&state.medicationtracker);
+            for record_id in alarming_records {
+                state.uistate.alarmui.add_alarming_record(record_id);
+            }
+            if state.uistate.alarmui.is_active() && state.state.panel != Panel::Alarm {
+                state.state.switch_to_alarm();
+            }
         }
         Message::OpenTime => {
             load_panel(state, &Panel::Time);
@@ -44,6 +50,15 @@ fn update(state: &mut App, message: Message) {
             .update(&mut state.medicationtracker, time),
         Message::Record(record) => state.uistate.recordui.update(record),
         Message::ManageMeds(managemeds) => state.uistate.managemedsui.update(managemeds),
+        Message::Alarm(alarm) => {
+            state
+                .uistate
+                .alarmui
+                .update(&mut state.medicationtracker, alarm);
+            if !state.uistate.alarmui.is_active() {
+                state.state.restore_previous_panel();
+            }
+        }
         Message::HideSidebar => println!("hide sidebar"),
         Message::OpenSidebar => println!("open sidebar"),
     }

@@ -15,6 +15,11 @@ pub fn main_content<'a>(state: &'a App) -> Element<'a, Message> {
             Panel::Record => state.uistate.recordui.view().map(Message::Record),
             Panel::ManageMeds => state.uistate.managemedsui.view().map(Message::ManageMeds),
             Panel::Settings => state.uistate.settingsui.view().map(Message::Settings),
+            Panel::Alarm => state
+                .uistate
+                .alarmui
+                .view(&state.medicationtracker)
+                .map(Message::Alarm),
         }]
         .padding(5),
     )
