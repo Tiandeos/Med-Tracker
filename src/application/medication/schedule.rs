@@ -1,6 +1,8 @@
 use super::periodtype::PeriodType;
 use chrono::Weekday;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct Schedule {
     pub id: String,                      // Unique uuid of schedule
     pub time: [u8; 2],                   // Hour, Minute

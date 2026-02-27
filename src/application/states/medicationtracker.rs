@@ -1,6 +1,9 @@
 use chrono::{DateTime, NaiveDate, Utc};
 
 use crate::application::medication::{medication::Medication, occurrencestatus::OccurrenceStatus, record::Record};
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct MedicationTracker {
     pub records: Vec<Record>,
     pub medications: Vec<Medication>,

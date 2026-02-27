@@ -1,7 +1,9 @@
 use chrono::{DateTime, Local, Utc};
 
 use crate::application::medication::schedule::Schedule;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct Medication {
     pub id: String, // Unique ID of medication
     pub name: String,

@@ -1,6 +1,9 @@
 use chrono::DateTime;
 
 use super::occurrencestatus::OccurrenceStatus;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Record {
     pub id: String,
     pub medication_id: String,       // UUID of medication.
