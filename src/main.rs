@@ -26,8 +26,17 @@ fn new() -> App {
     if let Some(tracker) = persistence::load_tracker() {
         app.medicationtracker = tracker;
     }
+    let old_date = app.medicationtracker.last_generation_date;
     check_new_day(&mut app.medicationtracker);
+    if old_date != app.medicationtracker.last_generation_date {
+        save(&app);
+    }
     app
+}
+fn save(state: &App) {
+    if let Err(e) = persistence::save_tracker(&state.medicationtracker) {
+        eprintln!("Save failed: {e}");
+    }
 }
 fn update(state: &mut App, message: Message) {
     match message {
@@ -35,7 +44,7 @@ fn update(state: &mut App, message: Message) {
             let old_date = state.medicationtracker.last_generation_date;
             check_new_day(&mut state.medicationtracker);
             if old_date != state.medicationtracker.last_generation_date {
-                let _ = persistence::save_tracker(&state.medicationtracker);
+                save(state);
             }
             let alarming_records = check_medication_schedule(&state.medicationtracker);
             for record_id in alarming_records {
@@ -53,7 +62,7 @@ fn update(state: &mut App, message: Message) {
         Message::OpenRecord => load_panel(state, &Panel::Record),
         Message::OpenSettings => load_panel(state, &Panel::Settings),
         Message::Settings(settings) => state.uistate.settingsui.update(settings),
-        Message::Time(ref msg) => {
+        Message::Time(msg) => {
             let should_save = matches!(
                 msg,
                 time::Message::AddMedication
@@ -63,14 +72,14 @@ fn update(state: &mut App, message: Message) {
             state
                 .uistate
                 .timeui
-                .update(&mut state.medicationtracker, msg.clone());
+                .update(&mut state.medicationtracker, msg);
             if should_save {
-                let _ = persistence::save_tracker(&state.medicationtracker);
+                save(state);
             }
         }
         Message::Record(record) => state.uistate.recordui.update(record),
         Message::ManageMeds(managemeds) => state.uistate.managemedsui.update(managemeds),
-        Message::Alarm(ref msg) => {
+        Message::Alarm(msg) => {
             let should_save = matches!(
                 msg,
                 alarm::Message::MarkTaken(_) | alarm::Message::MarkSkipped(_)
@@ -78,12 +87,12 @@ fn update(state: &mut App, message: Message) {
             state
                 .uistate
                 .alarmui
-                .update(&mut state.medicationtracker, msg.clone());
+                .update(&mut state.medicationtracker, msg);
             if !state.uistate.alarmui.is_active() {
                 state.state.restore_previous_panel();
             }
             if should_save {
-                let _ = persistence::save_tracker(&state.medicationtracker);
+                save(state);
             }
         }
         Message::HideSidebar => println!("hide sidebar"),
