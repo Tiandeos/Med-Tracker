@@ -1,6 +1,6 @@
 use chrono::{DateTime, NaiveDate, Utc};
 
-use crate::application::medication::{medication::Medication, record::Record};
+use crate::application::medication::{medication::Medication, occurrencestatus::OccurrenceStatus, record::Record};
 pub struct MedicationTracker {
     pub records: Vec<Record>,
     pub medications: Vec<Medication>,
@@ -23,7 +23,19 @@ impl MedicationTracker {
             for schedule in medication.schedules.iter() {}
         }
     }
-    pub fn mark_as_taken(&mut self, date: &str, occurrence_index: usize, taken_at: DateTime<Utc>) {}
-    pub fn mark_as_skipped(&mut self, date: &str, occurrence_index: usize, skip_reason: String) {}
-    pub fn mark_as_missed(&mut self, date: &str, occurrence_index: usize) {}
+    pub fn mark_as_taken(&mut self, record_id: &str) {
+        if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
+            record.occurrence_status = OccurrenceStatus::Taken { taken_at: Utc::now() };
+        }
+    }
+    pub fn mark_as_skipped(&mut self, record_id: &str) {
+        if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
+            record.occurrence_status = OccurrenceStatus::Skipped { reason: None };
+        }
+    }
+    pub fn mark_as_missed(&mut self, record_id: &str) {
+        if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
+            record.occurrence_status = OccurrenceStatus::Missed;
+        }
+    }
 }

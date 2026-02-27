@@ -59,8 +59,8 @@ impl TimeUI {
             Message::MedicationTimeHourChange(content) => self.medication_time_hour = content,
             Message::MedicationTimeMinuteChange(content) => self.medication_time_minute = content,
             Message::AddMedication => self.add_medication(state),
-            Message::MarkTaken(_id) => {}
-            Message::MarkSkipped(_id) => {}
+            Message::MarkTaken(id) => state.mark_as_taken(&id),
+            Message::MarkSkipped(id) => state.mark_as_skipped(&id),
             Message::MarkPostponed(_id) => {}
             Message::ToggleSound(_hour, _minute) => {}
         }
@@ -116,25 +116,50 @@ impl TimeUI {
                         OccurrenceStatus::Pending => column![].width(42).height(42).into(),
                     };
                     let status_container = container(status_icon).style(record_status_container);
-                    let medication_info = column![
-                        text(&med.name).size(22),
-                        text(&med.stock).size(16), // TODO: PLACEHOLDER CHANGE IT
-                    ]
-                    .spacing(5)
-                    .width(Fill);
+                    let status_text = match &record.occurrence_status {
+                        OccurrenceStatus::Taken { taken_at } => {
+                            let local_time = taken_at.with_timezone(&Local);
+                            let record_date = record.time.with_timezone(&Local).date_naive();
+                            if local_time.date_naive() == record_date {
+                                format!(
+                                    "Taken at {:02}:{:02}",
+                                    local_time.hour(),
+                                    local_time.minute()
+                                )
+                            } else {
+                                format!("Taken at {}", local_time.format("%d-%m-%Y %H:%M"))
+                            }
+                        }
+                        OccurrenceStatus::Skipped { reason: None } => String::from("Skipped"),
+                        OccurrenceStatus::Skipped { reason: Some(r) } => r.clone(),
+                        OccurrenceStatus::Pending | OccurrenceStatus::Missed => {
+                            med.stock.to_string()
+                        }
+                    };
+                    let medication_info =
+                        column![text(&med.name).size(22), text(status_text).size(16),]
+                            .spacing(5)
+                            .width(Fill);
+                    let is_pending = matches!(record.occurrence_status, OccurrenceStatus::Pending);
                     let action_buttons = row![
                         button(button_with_icon!("icons/icons8-complete-50.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press(Message::MarkTaken(record.id.clone())),
+                            .on_press_maybe(
+                                is_pending.then(|| Message::MarkTaken(record.id.clone()))
+                            ),
                         button(button_with_icon!("icons/icons8-cross-50.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press(Message::MarkSkipped(record.id.clone())),
+                            .on_press_maybe(
+                                is_pending.then(|| Message::MarkSkipped(record.id.clone()))
+                            ),
                         button(button_with_icon!("icons/icons8-clock-50.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press(Message::MarkPostponed(record.id.clone())),
+                            .on_press_maybe(
+                                is_pending.then(|| Message::MarkPostponed(record.id.clone()))
+                            ),
                     ]
                     .spacing(30)
                     .align_y(alignment::Vertical::Center);

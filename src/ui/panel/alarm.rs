@@ -223,11 +223,12 @@ impl AlarmUI {
 
     pub fn update(&mut self, tracker: &mut MedicationTracker, message: Message) {
         match message {
-            // TODO: implement functions
             Message::MarkTaken(record_id) => {
+                tracker.mark_as_taken(&record_id);
                 self.remove_record(&record_id);
             }
             Message::MarkSkipped(record_id) => {
+                tracker.mark_as_skipped(&record_id);
                 self.remove_record(&record_id);
             }
             Message::MarkRescheduled(record_id) => {
