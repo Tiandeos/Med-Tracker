@@ -2,7 +2,7 @@ use crate::application::medication::record::Record;
 use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::style::alarm::button::{alarm_action_button, alarm_take_button};
 use crate::ui::style::alarm::container::{alarm_panel_container, medication_item_container};
-use ice::widget::{button, column, container, row, scrollable, text};
+use ice::widget::{button, column, container, row, scrollable, text, Space};
 use ice::{Element, Length};
 use iced as ice;
 
@@ -156,6 +156,7 @@ impl AlarmUI {
                         text(format!("{} mg", dose)).size(16),
                     ]
                     .spacing(10),
+                    Space::new().width(Length::Fill),
                     row![
                         button(
                             container(text("Take Now"))
@@ -164,6 +165,7 @@ impl AlarmUI {
                                 .padding(10)
                         )
                         .style(alarm_take_button)
+                        .width(Length::Shrink)
                         .on_press(Message::MarkTaken(record.id.clone())),
                         button(
                             container(text("Skip"))
@@ -172,6 +174,7 @@ impl AlarmUI {
                                 .padding(10)
                         )
                         .style(alarm_action_button)
+                        .width(Length::Shrink)
                         .on_press(Message::MarkSkipped(record.id.clone())),
                     ]
                     .spacing(10),
@@ -180,7 +183,8 @@ impl AlarmUI {
                 .align_y(ice::alignment::Vertical::Center)
                 .padding(40),
             )
-            .style(medication_item_container);
+            .style(medication_item_container)
+            .width(Length::Fill);
 
             records_list = records_list.push(medication_container);
         }
