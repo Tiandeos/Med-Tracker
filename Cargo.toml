@@ -4,9 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-chrono = "0.4.42"
+chrono = { version = "0.4.42", features = ["serde"] }
 dark-light = "2.0.0"
+dirs = "6.0"
 iced = { version = "0.14.0", features = ["image","tokio"] }
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.145"
 uuid = {version = "1.18.1", features = ["v4"]}
 
