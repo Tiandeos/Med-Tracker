@@ -1,4 +1,5 @@
 use crate::ui::panel::{alarm, managemeds, record, settings, time};
+use iced;
 #[derive(Debug, Clone)]
 pub enum Message {
     OpenTime,
@@ -11,6 +12,9 @@ pub enum Message {
     ManageMeds(managemeds::Message),
     Alarm(alarm::Message),
     TimeCheck,
+    TrayLeftClick,
+    CloseRequested(iced::window::Id),
+    Quit,
     HideSidebar,
     OpenSidebar,
 }
