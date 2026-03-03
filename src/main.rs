@@ -15,7 +15,6 @@ use crate::notify::notification::send_alarm_notification;
 use crate::update::alarm_dismiss::dismiss_expired_alarms;
 use crate::update::loadpanel::load_panel;
 use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
-use crate::update::tray::tray_subscription;
 use application::panel::Panel;
 use chrono;
 use ui::panel::{alarm, time};
@@ -28,7 +27,6 @@ fn main() {
         .subscription(|state| {
             iced::Subscription::batch([
                 update_time(state),
-                tray_subscription(),
                 iced::window::close_requests().map(Message::CloseRequested),
             ])
         })
