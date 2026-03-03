@@ -12,9 +12,8 @@ use ui::view;
 use crate::application::app::App;
 use crate::audio::alarm::{play_alarm, stop_alarm};
 use crate::notify::notification::send_alarm_notification;
-use crate::notify::tray::build_tray_icon;
-use crate::update::loadpanel::load_panel;
 use crate::update::alarm_dismiss::dismiss_expired_alarms;
+use crate::update::loadpanel::load_panel;
 use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
 use crate::update::tray::tray_subscription;
 use application::panel::Panel;
@@ -47,7 +46,6 @@ fn new() -> App {
     if old_date != app.medicationtracker.last_generation_date {
         save(&app);
     }
-    app.tray_icon = build_tray_icon();
     app
 }
 
