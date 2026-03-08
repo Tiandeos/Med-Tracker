@@ -16,13 +16,29 @@ fn tray_stream() -> impl iced::futures::Stream<Item = Message> {
         loop {
             tokio::time::sleep(Duration::from_millis(50)).await;
             while let Ok(event) = TrayIconEvent::receiver().try_recv() {
-                if let TrayIconEvent::Click {
-                    button: MouseButton::Left,
-                    button_state: MouseButtonState::Up,
-                    ..
-                } = event
-                {
-                    output.send(Message::TrayLeftClick).await.ok();
+                match event {
+                    TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up,
+                        ..
+                    } => {
+                        output.send(Message::TrayLeftClick).await.ok();
+                    }
+                    TrayIconEvent::Click {
+                        button: MouseButton::Right,
+                        button_state: MouseButtonState::Up,
+                        position,
+                        ..
+                    } => {
+                        output
+                            .send(Message::TrayRightClick {
+                                x: position.x,
+                                y: position.y,
+                            })
+                            .await
+                            .ok();
+                    }
+                    _ => {}
                 }
             }
         }

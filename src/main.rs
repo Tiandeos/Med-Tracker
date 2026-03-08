@@ -7,7 +7,7 @@ mod ui;
 mod update;
 
 use application::message::Message;
-use iced::{self as ice, Task};
+use iced::{self as ice, Point, Size, Task};
 use ui::view;
 
 use crate::application::app::App;
@@ -23,10 +23,9 @@ use chrono;
 use ui::panel::{alarm, time};
 
 fn main() {
-    ice::application(new, update, view::view)
+    ice::daemon(new, update, view::view)
+        .title(view::title)
         .theme(view::theme)
-        .centered()
-        .exit_on_close_request(false)
         .subscription(|state| {
             iced::Subscription::batch([
                 update_time(state),
@@ -38,7 +37,7 @@ fn main() {
         .expect("a");
 }
 
-fn new() -> App {
+fn new() -> (App, Task<Message>) {
     let mut app = App::new();
     if let Some(tracker) = persistence::load_tracker() {
         app.medicationtracker = tracker;
@@ -49,12 +48,44 @@ fn new() -> App {
         save(&app);
     }
     app.tray_icon = create_tray();
-    app
+
+    let (main_id, open_task) = iced::window::open(iced::window::Settings {
+        size: Size::new(1000.0, 640.0),
+        position: iced::window::Position::Centered,
+        exit_on_close_request: false,
+        ..Default::default()
+    });
+    app.window_id = Some(main_id);
+
+    (app, open_task.map(Message::WindowOpened))
 }
 
 fn save(state: &App) {
     if let Err(e) = persistence::save_tracker(&state.medicationtracker) {
         eprintln!("Save failed: {e}");
+    }
+}
+
+fn main_window_settings() -> iced::window::Settings {
+    iced::window::Settings {
+        size: Size::new(1000.0, 640.0),
+        position: iced::window::Position::Centered,
+        exit_on_close_request: false,
+        ..Default::default()
+    }
+}
+
+/// Shows the main window: focuses it if already open, reopens it if closed.
+fn show_main_window(state: &mut App) -> Task<Message> {
+    if let Some(id) = state.window_id {
+        Task::batch([
+            iced::window::set_mode(id, iced::window::Mode::Windowed),
+            iced::window::gain_focus(id),
+        ])
+    } else {
+        let (id, task) = iced::window::open(main_window_settings());
+        state.window_id = Some(id);
+        task.map(Message::WindowOpened)
     }
 }
 
@@ -117,19 +148,46 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
             Task::none()
         }
         Message::CloseRequested(id) => {
-            state.window_id = Some(id);
-            iced::window::set_mode(id, iced::window::Mode::Hidden)
+            if Some(id) == state.popup_window_id {
+                state.popup_window_id = None;
+            } else {
+                state.window_id = None;
+            }
+            iced::window::close(id)
         }
-        Message::TrayLeftClick => {
-            if let Some(id) = state.window_id {
-                Task::batch([
-                    iced::window::set_mode(id, iced::window::Mode::Windowed),
-                    iced::window::gain_focus(id),
-                ])
+        Message::TrayLeftClick => show_main_window(state),
+        Message::TrayRightClick { x, y } => {
+            // Close any existing popup first
+            let close_existing = if let Some(popup_id) = state.popup_window_id.take() {
+                iced::window::close(popup_id)
             } else {
                 Task::none()
-            }
+            };
+
+            let (id, open_task) = iced::window::open(iced::window::Settings {
+                size: Size::new(180.0, 80.0),
+                position: iced::window::Position::Specific(Point::new(
+                    (x as f32 - 90.0).max(0.0),
+                    (y as f32 - 80.0).max(0.0),
+                )),
+                decorations: false,
+                resizable: false,
+                level: iced::window::Level::AlwaysOnTop,
+                ..Default::default()
+            });
+            state.popup_window_id = Some(id);
+
+            Task::batch([close_existing, open_task.map(Message::WindowOpened)])
         }
+        Message::TrayMenuShow => {
+            let close_popup = if let Some(popup_id) = state.popup_window_id.take() {
+                iced::window::close(popup_id)
+            } else {
+                Task::none()
+            };
+            Task::batch([close_popup, show_main_window(state)])
+        }
+        Message::WindowOpened(_) => Task::none(),
         Message::Quit => iced::exit(),
         Message::OpenTime => {
             load_panel(state, &Panel::Time);
