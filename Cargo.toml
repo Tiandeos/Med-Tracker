@@ -14,7 +14,8 @@ uuid = {version = "1.18.1", features = ["v4"]}
 rodio = { version = "0.20", default-features = false, features = ["symphonia-vorbis", "symphonia-wav"] }
 notify-rust = "4"
 futures = "0.3"
-tokio = { version = "1", features = ["time"] }
+tokio = { version = "1", features = ["time", "sync"] }
+tray = "0.1.2"
 
 [profile.dev]
 opt-level = 1
