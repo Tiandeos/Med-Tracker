@@ -2,6 +2,7 @@ mod application;
 mod audio;
 mod notify;
 mod persistence;
+mod tray;
 mod ui;
 mod update;
 
@@ -14,6 +15,8 @@ use crate::audio::alarm::{play_alarm, stop_alarm};
 use crate::notify::notification::send_alarm_notification;
 use crate::update::alarm_dismiss::dismiss_expired_alarms;
 use crate::update::loadpanel::load_panel;
+use crate::tray::subscription::tray_subscription;
+use crate::tray::tray::create_tray;
 use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
 use application::panel::Panel;
 use chrono;
@@ -28,6 +31,7 @@ fn main() {
             iced::Subscription::batch([
                 update_time(state),
                 iced::window::close_requests().map(Message::CloseRequested),
+                tray_subscription(state.tray_icon.is_some()),
             ])
         })
         .run()
@@ -44,6 +48,7 @@ fn new() -> App {
     if old_date != app.medicationtracker.last_generation_date {
         save(&app);
     }
+    app.tray_icon = create_tray();
     app
 }
 

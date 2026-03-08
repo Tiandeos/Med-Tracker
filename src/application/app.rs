@@ -9,6 +9,7 @@ pub struct App {
     pub settings: Settings,
     pub medicationtracker: MedicationTracker,
     pub window_id: Option<iced::window::Id>,
+    pub tray_icon: Option<tray::TrayIcon>,
 }
 impl App {
     pub fn new() -> Self {
@@ -18,6 +19,7 @@ impl App {
             uistate: UIState::new(),
             medicationtracker: MedicationTracker::new(),
             window_id: None,
+            tray_icon: None,
         }
     }
 }
@@ -29,6 +31,7 @@ impl Default for App {
             uistate: UIState::new(),
             medicationtracker: MedicationTracker::new(),
             window_id: None,
+            tray_icon: None,
         }
     }
 }
