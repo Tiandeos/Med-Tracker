@@ -107,7 +107,7 @@ impl TimeUI {
                                 .into()
                         }
                         OccurrenceStatus::Skipped { .. } | OccurrenceStatus::Missed => {
-                            Image::new("icons/icons8-cross-50.png")
+                            Image::new("icons/icons8-cross-100.png")
                                 .content_fit(ContentFit::Cover)
                                 .width(42)
                                 .height(42)
