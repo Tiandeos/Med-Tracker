@@ -58,6 +58,7 @@ pub enum Message {
     ScheduleMinuteChange(String),
     SchedulePeriodTimeChange(String),
     SaveSchedule,
+    DeleteSchedule(String),
     Done,
 }
 
@@ -163,6 +164,13 @@ impl MedicationAddPanel {
             Message::ScheduleHourChange(v) => self.schedule_hour = v,
             Message::ScheduleMinuteChange(v) => self.schedule_minute = v,
             Message::SchedulePeriodTimeChange(v) => self.schedule_period_time = v,
+            Message::DeleteSchedule(id) => {
+                if let Some(med_id) = &self.current_medication_id {
+                    if let Some(med) = state.medications.iter_mut().find(|m| m.id == *med_id) {
+                        med.schedules.retain(|s| s.id != id);
+                    }
+                }
+            }
             Message::SaveSchedule => {
                 let hour: u8 = self.schedule_hour.parse().unwrap_or(0);
                 let minute: u8 = self.schedule_minute.parse().unwrap_or(0);
@@ -324,13 +332,22 @@ impl MedicationAddPanel {
                 .spacing(10)
                 .align_y(alignment::Vertical::Center);
 
-                rows = rows.push(
+                let schedule_id = schedule.id.clone();
+                let schedule_row = row![
                     button(row_content)
                         .style(style::time::button::add_button)
                         .padding([12, 20])
                         .width(Fill)
-                        .on_press(Message::EditSchedule(schedule.id.clone())),
-                );
+                        .on_press(Message::EditSchedule(schedule_id.clone())),
+                    button(button_with_icon!("icons/icons8-cross-100.png", 20, 6))
+                        .style(style::time::button::overlay_close_button)
+                        .padding(8)
+                        .on_press(Message::DeleteSchedule(schedule_id)),
+                ]
+                .spacing(8)
+                .align_y(alignment::Vertical::Center);
+
+                rows = rows.push(schedule_row);
             }
             scrollable(rows).into()
         };
