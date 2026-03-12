@@ -13,7 +13,11 @@ pub fn main_content<'a>(state: &'a App) -> Element<'a, Message> {
                 .view(&state.medicationtracker)
                 .map(Message::Time),
             Panel::Record => state.uistate.recordui.view().map(Message::Record),
-            Panel::ManageMeds => state.uistate.managemedsui.view().map(Message::ManageMeds),
+            Panel::ManageMeds => state
+                .uistate
+                .medicationsui
+                .view(&state.medicationtracker)
+                .map(Message::Medications),
             Panel::Settings => state.uistate.settingsui.view().map(Message::Settings),
             Panel::Alarm => state
                 .uistate

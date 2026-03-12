@@ -21,7 +21,7 @@ use crate::update::generate_records::generate_future_records;
 use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
 use application::panel::Panel;
 use chrono;
-use ui::panel::{alarm, home};
+use ui::panel::{alarm, home, medications};
 
 fn main() {
     ice::daemon(new, update, view::view)
@@ -234,12 +234,16 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
             }
             Task::none()
         }
-        Message::Record(record) => {
-            state.uistate.recordui.update(record);
+        Message::Medications(msg) => {
+            let should_save = matches!(msg, medications::medicationsmain::Message::ConfirmDelete);
+            state.uistate.medicationsui.update(&mut state.medicationtracker, msg);
+            if should_save {
+                save(state);
+            }
             Task::none()
         }
-        Message::ManageMeds(managemeds) => {
-            state.uistate.managemedsui.update(managemeds);
+        Message::Record(msg) => {
+            state.uistate.recordui.update(msg);
             Task::none()
         }
         Message::Alarm(msg) => {
