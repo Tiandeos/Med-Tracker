@@ -1,72 +1,65 @@
-use crate::application::medication::medication::Medication;
 use crate::application::medication::occurrencestatus::OccurrenceStatus;
-use crate::application::medication::periodtype::PeriodType;
 use crate::application::medication::record::Record;
-use crate::application::medication::schedule::Schedule;
 use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::macros::{self, button_with_icon};
-use crate::ui::panel::time::Section::Main;
 use crate::ui::style;
-use crate::ui::style::button::close_button;
-use crate::ui::style::container::container_panel;
 use crate::ui::style::time::container::{record_status_container, schedule_container};
-use crate::update::generate_records::generate_records_for_medication;
-use chrono::{Datelike, Duration, Local, NaiveDate, Timelike, Utc};
-use ice::Length::Fill;
-use ice::widget::{Image, button, column, container, row, scrollable, text, text_input};
-use ice::{ContentFit, Element, alignment};
-use iced::Length::{FillPortion, Shrink};
-use iced::{self as ice, Padding};
-use std::collections::BTreeMap;
+use chrono::{Datelike, Duration, Local, NaiveDate, Timelike};
+use iced::widget::{Image, button, column, container, row, scrollable, stack, text};
+use iced::{ContentFit, Element, Padding, alignment};
+use iced::Length::{Fill, FillPortion, Shrink};
 
 pub struct TimeUI {
-    section: Section,
     pub selected_date: NaiveDate,
-    medication_name: String,
-    medication_time_hour: String,
-    medication_time_minute: String,
+    medication_panel: super::medicationaddpanel::MedicationAddPanel,
 }
+
 impl TimeUI {
     pub fn new() -> TimeUI {
         Self {
-            section: Main,
             selected_date: Local::now().date_naive(),
-            medication_name: String::from(""),
-            medication_time_hour: String::from(""),
-            medication_time_minute: String::from(""),
+            medication_panel: super::medicationaddpanel::MedicationAddPanel::new(),
         }
     }
+
     pub fn view<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
-        match self.section {
-            Section::Main => column![
-                self.calendar_part(),
-                container(self.main_part(tracker)).height(Fill),
-                self.add_panel()
-            ]
-            .into(),
-            Section::AddMedication => self.medication_add_panel(),
+        let main = column![
+            self.calendar_part(),
+            container(self.main_part(tracker)).height(Fill),
+            self.add_panel()
+        ];
+
+        if let Some(overlay) = self.medication_panel.view(tracker) {
+            stack![main, overlay.map(Message::MedicationAdd)]
+                .width(Fill)
+                .height(Fill)
+                .into()
+        } else {
+            main.into()
         }
     }
+
     pub fn update(&mut self, state: &mut MedicationTracker, message: Message) {
         match message {
-            Message::OpenSection(Main) => self.section = Section::Main,
-            Message::OpenSection(Section::AddMedication) => self.section = Section::AddMedication,
             Message::SelectDay(date) => {
                 self.selected_date = date;
                 println!("Current TimeUI Selected Date: {}", self.selected_date)
             }
-            Message::MedicationNameChange(content) => self.medication_name = content,
-            Message::MedicationTimeHourChange(content) => self.medication_time_hour = content,
-            Message::MedicationTimeMinuteChange(content) => self.medication_time_minute = content,
-            Message::AddMedication => self.add_medication(state),
+            Message::MedicationAdd(msg) => self.medication_panel.update(state, msg),
             Message::MarkTaken(id) => state.mark_as_taken(&id),
             Message::MarkSkipped(id) => state.mark_as_skipped(&id),
             Message::MarkPostponed(_id) => {}
             Message::ToggleSound(_hour, _minute) => {}
         }
     }
+
+    pub fn set_section_to_main(&mut self) {
+        self.medication_panel.close();
+    }
+
     fn main_part<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
-        let mut grouped: BTreeMap<(u32, u32), Vec<&Record>> = BTreeMap::new();
+        let mut grouped: std::collections::BTreeMap<(u32, u32), Vec<&Record>> =
+            std::collections::BTreeMap::new();
         for record in &tracker.records {
             if record.time.with_timezone(&Local).date_naive() != self.selected_date {
                 continue;
@@ -79,6 +72,7 @@ impl TimeUI {
                 .or_default()
                 .push(record);
         }
+
         let mut medications_container_list = column![].spacing(20);
         for ((hour, minute), records) in &grouped {
             let mut schedule_container_column = column![].padding([20, 40]).spacing(20);
@@ -91,6 +85,7 @@ impl TimeUI {
             let schedule_header =
                 row![schedule_label, sound_button].align_y(alignment::Vertical::Center);
             schedule_container_column = schedule_container_column.push(schedule_header);
+
             let mut medications_list = column![].spacing(10).padding([0, 20]);
             for record in records {
                 if let Some(med) = tracker
@@ -137,7 +132,7 @@ impl TimeUI {
                         }
                     };
                     let medication_info =
-                        column![text(&med.name).size(22), text(status_text).size(16),]
+                        column![text(&med.name).size(22), text(status_text).size(16)]
                             .spacing(5)
                             .width(Fill);
                     let is_pending = matches!(record.occurrence_status, OccurrenceStatus::Pending);
@@ -163,6 +158,7 @@ impl TimeUI {
                     ]
                     .spacing(30)
                     .align_y(alignment::Vertical::Center);
+
                     let medication_row = row![status_container, medication_info, action_buttons]
                         .align_y(alignment::Vertical::Center)
                         .spacing(20);
@@ -178,18 +174,20 @@ impl TimeUI {
         }
         scrollable(container(medications_container_list.max_width(750)).center_x(Fill)).into()
     }
+
     fn add_panel<'a>(&self) -> Element<'a, Message> {
         container(
             button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
                 .style(style::time::button::add_button)
                 .padding([20, 100])
-                .on_press(Message::OpenSection(Section::AddMedication)),
+                .on_press(Message::MedicationAdd(super::medicationaddpanel::Message::Open)),
         )
         .center_x(Fill)
         .height(Shrink)
         .padding(Padding::new(0.0).bottom(20))
         .into()
     }
+
     fn calendar_part<'a>(&self) -> Element<'a, Message> {
         let today = Local::now().date_naive();
         let mut days = row![].spacing(35);
@@ -205,7 +203,7 @@ impl TimeUI {
                 chrono::Weekday::Sun => "Sunday",
             };
             let day_month = format!("{}/{}", date.day(), date.month());
-            let label = column![text(weekday).center(), text(day_month).center(),].spacing(50);
+            let label = column![text(weekday).center(), text(day_month).center()].spacing(50);
             let is_selected = date == self.selected_date;
             days = days.push(
                 button(label)
@@ -221,68 +219,12 @@ impl TimeUI {
             .padding(Padding::new(0.0).bottom(20))
             .into()
     }
-    fn medication_add_panel<'a>(&self) -> Element<'a, Message> {
-        container(column![
-            row![
-                button(button_with_icon!("icons/plus.png", 30, 10))
-                    .on_press(Message::OpenSection(Section::Main))
-                    .style(close_button)
-            ]
-            .height(100),
-            row![
-                text("Medication Name: ").align_y(alignment::Vertical::Center),
-                text_input("...", &self.medication_name).on_input(Message::MedicationNameChange),
-            ]
-            .spacing(20)
-            .height(Fill),
-            row![
-                text("Hour: ").align_y(alignment::Vertical::Center),
-                text_input("...", &self.medication_time_hour)
-                    .on_input(Message::MedicationTimeHourChange),
-                text("Minute: ").align_y(alignment::Vertical::Center),
-                text_input("...", &self.medication_time_minute)
-                    .on_input(Message::MedicationTimeMinuteChange),
-            ]
-            .spacing(20)
-            .height(Fill),
-            button("Add Medication")
-                .on_press(Message::AddMedication)
-                .height(100),
-        ])
-        .style(container_panel)
-        .padding(20)
-        .height(Fill)
-        .width(Fill)
-        .into()
-    }
-    fn add_medication(&self, state: &mut MedicationTracker) {
-        let hour: u8 = self.medication_time_hour.parse().expect("Not a number");
-        let minute: u8 = self.medication_time_minute.parse().expect("Not a number");
-        let time: [u8; 2] = [hour, minute];
-        let mut medication: Medication = Medication::new(self.medication_name.clone(), 0.0);
-        let schedule: Schedule = Schedule::new(time, Some(PeriodType::Daily), 3, 1.0);
-        medication.schedules.push(schedule);
-        let medication_id = medication.id.clone();
-        state.medications.push(medication);
-        generate_records_for_medication(state, &medication_id);
-    }
-    pub fn set_section_to_main(&mut self) {
-        self.section = Section::Main;
-    }
 }
-#[derive(Debug, Clone)]
-pub enum Section {
-    Main,
-    AddMedication,
-}
+
 #[derive(Debug, Clone)]
 pub enum Message {
-    OpenSection(Section),
     SelectDay(NaiveDate),
-    MedicationNameChange(String),
-    MedicationTimeHourChange(String),
-    MedicationTimeMinuteChange(String),
-    AddMedication,
+    MedicationAdd(super::medicationaddpanel::Message),
     MarkTaken(String),
     MarkSkipped(String),
     MarkPostponed(String),

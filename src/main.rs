@@ -17,10 +17,11 @@ use crate::update::alarm_dismiss::dismiss_expired_alarms;
 use crate::update::loadpanel::load_panel;
 use crate::tray::subscription::tray_subscription;
 use crate::tray::tray::create_tray;
+use crate::update::generate_records::generate_future_records;
 use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
 use application::panel::Panel;
 use chrono;
-use ui::panel::{alarm, time};
+use ui::panel::{alarm, home};
 
 fn main() {
     ice::daemon(new, update, view::view)
@@ -213,14 +214,21 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
         Message::Time(msg) => {
             let should_save = matches!(
                 msg,
-                time::Message::AddMedication
-                    | time::Message::MarkTaken(_)
-                    | time::Message::MarkSkipped(_)
+                home::time::Message::MedicationAdd(_)
+                    | home::time::Message::MarkTaken(_)
+                    | home::time::Message::MarkSkipped(_)
+            );
+            let should_generate = matches!(
+                msg,
+                home::time::Message::MedicationAdd(home::medicationaddpanel::Message::Done)
             );
             state
                 .uistate
                 .timeui
                 .update(&mut state.medicationtracker, msg);
+            if should_generate {
+                generate_future_records(&mut state.medicationtracker);
+            }
             if should_save {
                 save(state);
             }

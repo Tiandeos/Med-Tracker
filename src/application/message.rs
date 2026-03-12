@@ -1,4 +1,4 @@
-use crate::ui::panel::{alarm, managemeds, record, settings, time};
+use crate::ui::panel::{alarm, home, managemeds, record, settings};
 use iced;
 #[derive(Debug, Clone)]
 pub enum Message {
@@ -7,7 +7,7 @@ pub enum Message {
     OpenRecord,
     OpenSettings,
     Settings(settings::Message),
-    Time(time::Message),
+    Time(home::time::Message),
     Record(record::Message),
     ManageMeds(managemeds::Message),
     Alarm(alarm::Message),
