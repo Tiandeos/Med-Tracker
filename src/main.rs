@@ -235,8 +235,27 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
             Task::none()
         }
         Message::Medications(msg) => {
-            let should_save = matches!(msg, medications::medicationsmain::Message::ConfirmDelete);
-            state.uistate.medicationsui.update(&mut state.medicationtracker, msg);
+            use medications::medicationsmain::Message as MedMsg;
+            use crate::ui::panel::medications::editpanel::Message as EditMsg;
+            let should_save = matches!(
+                msg,
+                MedMsg::ConfirmDelete
+                    | MedMsg::Edit(EditMsg::SaveMedicationEdit)
+                    | MedMsg::Edit(EditMsg::SaveStock)
+                    | MedMsg::Edit(EditMsg::SaveSchedule)
+                    | MedMsg::Edit(EditMsg::DeleteSchedule(_))
+            );
+            let should_generate = matches!(
+                msg,
+                MedMsg::Edit(EditMsg::SaveSchedule) | MedMsg::Edit(EditMsg::DeleteSchedule(_))
+            );
+            state
+                .uistate
+                .medicationsui
+                .update(&mut state.medicationtracker, msg);
+            if should_generate {
+                generate_future_records(&mut state.medicationtracker);
+            }
             if should_save {
                 save(state);
             }

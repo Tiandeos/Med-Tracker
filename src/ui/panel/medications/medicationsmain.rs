@@ -1,6 +1,8 @@
 use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::macros::button_with_icon;
+use crate::ui::panel::medications::editpanel;
 use crate::ui::style;
+use crate::ui::style::medications::button as med_button;
 use crate::ui::style::medications::container as med_container;
 use iced::Length::{Fill, Shrink};
 use iced::widget::{Column, Image, button, column, container, row, scrollable, stack, text};
@@ -8,25 +10,35 @@ use iced::{ContentFit, Element, alignment};
 
 pub struct Record {
     pending_delete_id: Option<String>,
+    pub edit_panel: editpanel::MedicationEditPanel,
 }
 
 impl Record {
     pub fn new() -> Record {
         Self {
             pending_delete_id: None,
+            edit_panel: editpanel::MedicationEditPanel::new(),
         }
     }
 
     pub fn view<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
         let list = self.medication_list(tracker);
 
+        let mut layers: Vec<Element<'a, Message>> = vec![list];
+
         if self.pending_delete_id.is_some() {
-            stack![list, self.backdrop(), self.confirm_delete_overlay()]
-                .width(Fill)
-                .height(Fill)
-                .into()
+            layers.push(self.backdrop());
+            layers.push(self.confirm_delete_overlay());
+        }
+
+        if let Some(overlay) = self.edit_panel.view(tracker) {
+            layers.push(overlay.map(Message::Edit));
+        }
+
+        if layers.len() == 1 {
+            layers.remove(0)
         } else {
-            list
+            stack(layers).width(Fill).height(Fill).into()
         }
     }
 
@@ -44,6 +56,12 @@ impl Record {
             Message::CancelDelete => {
                 self.pending_delete_id = None;
             }
+            Message::OpenEdit(id) => {
+                self.edit_panel.open(id, tracker);
+            }
+            Message::Edit(msg) => {
+                self.edit_panel.update(tracker, msg);
+            }
         }
     }
 
@@ -54,11 +72,13 @@ impl Record {
             let pill_placeholder = container(
                 Image::new("icons/pill.png")
                     .content_fit(ContentFit::Cover)
-                    .width(52)
-                    .height(52),
+                    .width(32)
+                    .height(32),
             )
             .width(52)
             .height(52)
+            .center_x(52)
+            .center_y(52)
             .style(med_container::pill_icon_container);
 
             let info = column![
@@ -78,9 +98,15 @@ impl Record {
                 .align_y(alignment::Vertical::Center)
                 .padding([14, 20]);
 
-            let card = container(card_row).style(med_container::medication_card);
+            let card = container(card_row).width(Fill);
+            let med_id = med.id.clone();
+            let card_btn = button(card)
+                .style(med_button::medication_card_button)
+                .padding(0)
+                .width(Fill)
+                .on_press(Message::OpenEdit(med_id));
 
-            list = list.push(card);
+            list = list.push(card_btn);
         }
 
         if tracker.medications.is_empty() {
@@ -148,4 +174,6 @@ pub enum Message {
     AskDelete(String),
     ConfirmDelete,
     CancelDelete,
+    OpenEdit(String),
+    Edit(editpanel::Message),
 }

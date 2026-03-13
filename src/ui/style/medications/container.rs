@@ -17,6 +17,7 @@ pub fn medication_card(theme: &Theme) -> Style {
     let palette = theme.extended_palette();
     Style {
         background: Some(Background::Color(palette.background.weak.color)),
+        text_color: Some(palette.background.base.text),
         border: Border {
             color: Color::BLACK,
             width: 1.0,
