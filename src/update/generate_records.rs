@@ -160,10 +160,11 @@ fn advance_by_period(date: NaiveDate, period_type: &PeriodType, interval: u8) ->
 }
 
 fn record_exists(existing_records: &[Record], new_record: &Record) -> bool {
+    let new_date = new_record.time.with_timezone(&Local).date_naive();
     existing_records.iter().any(|r| {
         r.medication_id == new_record.medication_id
             && r.schedule_id == new_record.schedule_id
-            && r.time == new_record.time
+            && r.time.with_timezone(&Local).date_naive() == new_date
     })
 }
 

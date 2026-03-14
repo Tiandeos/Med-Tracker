@@ -1,3 +1,4 @@
+use crate::application::medication::occurrencestatus::OccurrenceStatus;
 use crate::application::medication::periodtype::PeriodType;
 use crate::application::medication::schedule::Schedule;
 use crate::application::states::medicationtracker::MedicationTracker;
@@ -232,7 +233,7 @@ impl MedicationEditPanel {
                     let now = chrono::Utc::now();
                     tracker
                         .records
-                        .retain(|r| !(r.schedule_id == id && r.time > now));
+                        .retain(|r| !(r.schedule_id == id && r.time > now && matches!(r.occurrence_status, OccurrenceStatus::Pending)));
                 }
             }
             Message::BackToOptionsFromSchedules => self.section = Section::Options,
@@ -274,7 +275,7 @@ impl MedicationEditPanel {
                         let now = chrono::Utc::now();
                         tracker
                             .records
-                            .retain(|r| !(r.schedule_id == eid && r.time > now));
+                            .retain(|r| !(r.schedule_id == eid && r.time > now && matches!(r.occurrence_status, OccurrenceStatus::Pending)));
                         if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == med_id) {
                             if let Some(s) = med.schedules.iter_mut().find(|s| s.id == eid) {
                                 s.time = [hour, minute];
