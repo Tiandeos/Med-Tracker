@@ -39,6 +39,10 @@ pub struct MedicationEditPanel {
     schedule_period_time: String,
     selected_weekdays: Vec<Weekday>,
     stock_edit_input: String,
+    name_error: Option<String>,
+    stock_error: Option<String>,
+    stock_edit_error: Option<String>,
+    pub pending_save: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -83,6 +87,10 @@ impl MedicationEditPanel {
             schedule_period_time: String::new(),
             selected_weekdays: vec![],
             stock_edit_input: String::new(),
+            name_error: None,
+            stock_error: None,
+            stock_edit_error: None,
+            pending_save: false,
         }
     }
 
@@ -102,6 +110,9 @@ impl MedicationEditPanel {
         self.name_input = String::new();
         self.stock_input = String::new();
         self.stock_edit_input = String::new();
+        self.name_error = None;
+        self.stock_error = None;
+        self.stock_edit_error = None;
         self.reset_schedule_fields();
     }
 
@@ -135,6 +146,7 @@ impl MedicationEditPanel {
     }
 
     pub fn update(&mut self, tracker: &mut MedicationTracker, message: Message) {
+        self.pending_save = false;
         match message {
             Message::Close => self.close(),
 
@@ -142,18 +154,47 @@ impl MedicationEditPanel {
             Message::GoToScheduleList => self.section = Section::ScheduleList,
             Message::GoToStock => self.section = Section::Stock,
 
-            Message::NameChange(v) => self.name_input = v,
-            Message::StockChange(v) => self.stock_input = v,
+            Message::NameChange(v) => {
+                self.name_error = None;
+                self.name_input = v;
+            }
+            Message::StockChange(v) => {
+                self.stock_error = None;
+                self.stock_input = v;
+            }
             Message::SaveMedicationEdit => {
-                if let Some(id) = self.current_medication_id.clone() {
-                    if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == id) {
-                        med.name = self.name_input.clone();
-                        med.stock = self.stock_input.parse().unwrap_or(med.stock);
+                let name = self.name_input.trim();
+                if name.len() < 3 {
+                    self.name_error = Some("Name must be at least 3 characters.".into());
+                    return;
+                }
+                let parsed_stock: Option<f32> = self.stock_input.parse().ok();
+                match parsed_stock {
+                    None => {
+                        self.stock_error = Some("Enter a valid number.".into());
+                        return;
+                    }
+                    Some(v) if v < 0.0 => {
+                        self.stock_error = Some("Stock cannot be negative.".into());
+                        return;
+                    }
+                    Some(v) => {
+                        if let Some(id) = self.current_medication_id.clone() {
+                            if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == id) {
+                                med.name = name.to_string();
+                                med.stock = v;
+                                self.pending_save = true;
+                            }
+                        }
                     }
                 }
                 self.section = Section::Options;
             }
-            Message::BackToOptions => self.section = Section::Options,
+            Message::BackToOptions => {
+                self.name_error = None;
+                self.stock_error = None;
+                self.section = Section::Options;
+            }
 
             Message::OpenNewSchedule => {
                 self.reset_schedule_fields();
@@ -259,16 +300,36 @@ impl MedicationEditPanel {
                 self.section = Section::ScheduleList;
             }
 
-            Message::StockEditChange(v) => self.stock_edit_input = v,
+            Message::StockEditChange(v) => {
+                self.stock_edit_error = None;
+                self.stock_edit_input = v;
+            }
             Message::SaveStock => {
-                if let Some(id) = self.current_medication_id.clone() {
-                    if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == id) {
-                        med.stock = self.stock_edit_input.parse().unwrap_or(med.stock);
+                let parsed_stock: Option<f32> = self.stock_edit_input.parse().ok();
+                match parsed_stock {
+                    None => {
+                        self.stock_edit_error = Some("Enter a valid number.".into());
+                        return;
+                    }
+                    Some(v) if v < 0.0 => {
+                        self.stock_edit_error = Some("Stock cannot be negative.".into());
+                        return;
+                    }
+                    Some(v) => {
+                        if let Some(id) = self.current_medication_id.clone() {
+                            if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == id) {
+                                med.stock = v;
+                                self.pending_save = true;
+                            }
+                        }
                     }
                 }
                 self.section = Section::Options;
             }
-            Message::BackToOptionsFromStock => self.section = Section::Options,
+            Message::BackToOptionsFromStock => {
+                self.stock_edit_error = None;
+                self.section = Section::Options;
+            }
         }
     }
 
@@ -370,17 +431,31 @@ impl MedicationEditPanel {
         ]
         .align_y(alignment::Vertical::Center);
 
-        let name_field = column![
+        let mut name_field = column![
             text("Medication Name").size(16),
             text_input("Name...", &self.name_input).on_input(Message::NameChange),
         ]
         .spacing(8);
+        if let Some(err) = &self.name_error {
+            name_field = name_field.push(
+                text(err.clone()).size(13).style(|_theme: &Theme| iced::widget::text::Style {
+                    color: Some(Color::from_rgb(0.85, 0.2, 0.2)),
+                }),
+            );
+        }
 
-        let stock_field = column![
+        let mut stock_field = column![
             text("Stock").size(16),
             text_input("0", &self.stock_input).on_input(Message::StockChange),
         ]
         .spacing(8);
+        if let Some(err) = &self.stock_error {
+            stock_field = stock_field.push(
+                text(err.clone()).size(13).style(|_theme: &Theme| iced::widget::text::Style {
+                    color: Some(Color::from_rgb(0.85, 0.2, 0.2)),
+                }),
+            );
+        }
 
         let save_btn = container(
             button("Save")
@@ -615,11 +690,18 @@ impl MedicationEditPanel {
         ]
         .align_y(alignment::Vertical::Center);
 
-        let stock_field = column![
+        let mut stock_field = column![
             text("Current Stock").size(16),
             text_input("0", &self.stock_edit_input).on_input(Message::StockEditChange),
         ]
         .spacing(8);
+        if let Some(err) = &self.stock_edit_error {
+            stock_field = stock_field.push(
+                text(err.clone()).size(13).style(|_theme: &Theme| iced::widget::text::Style {
+                    color: Some(Color::from_rgb(0.85, 0.2, 0.2)),
+                }),
+            );
+        }
 
         let save_btn = container(
             button("Save")
