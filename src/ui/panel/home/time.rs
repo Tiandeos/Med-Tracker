@@ -12,6 +12,7 @@ use iced::{ContentFit, Element, Padding, alignment};
 pub struct TimeUI {
     pub selected_date: NaiveDate,
     medication_panel: super::medicationaddpanel::MedicationAddPanel,
+    reschedule_panel: super::reschedulepanel::ReschedulePanel,
 }
 
 impl TimeUI {
@@ -19,6 +20,7 @@ impl TimeUI {
         Self {
             selected_date: Local::now().date_naive(),
             medication_panel: super::medicationaddpanel::MedicationAddPanel::new(),
+            reschedule_panel: super::reschedulepanel::ReschedulePanel::new(),
         }
     }
 
@@ -29,13 +31,22 @@ impl TimeUI {
             self.add_panel()
         ];
 
-        if let Some(overlay) = self.medication_panel.view(tracker) {
+        let base: Element<Message> = if let Some(overlay) = self.medication_panel.view(tracker) {
             stack![main, overlay.map(Message::MedicationAdd)]
                 .width(Fill)
                 .height(Fill)
                 .into()
         } else {
             main.into()
+        };
+
+        if let Some(overlay) = self.reschedule_panel.view() {
+            stack![base, overlay.map(Message::Reschedule)]
+                .width(Fill)
+                .height(Fill)
+                .into()
+        } else {
+            base
         }
     }
 
@@ -48,7 +59,9 @@ impl TimeUI {
             Message::MedicationAdd(msg) => self.medication_panel.update(state, msg),
             Message::MarkTaken(id) => state.mark_as_taken(&id),
             Message::MarkSkipped(id) => state.mark_as_skipped(&id),
-            Message::MarkPostponed(_id) => {}
+            Message::Reschedule(msg) => {
+                self.reschedule_panel.update(state, msg);
+            }
             Message::ToggleSound(_hour, _minute) => {}
         }
     }
@@ -153,7 +166,9 @@ impl TimeUI {
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press_maybe(
-                                is_pending.then(|| Message::MarkPostponed(record.id.clone()))
+                                is_pending.then(|| Message::Reschedule(
+                                    super::reschedulepanel::Message::Open(record.id.clone())
+                                ))
                             ),
                     ]
                     .spacing(30)
@@ -229,6 +244,6 @@ pub enum Message {
     MedicationAdd(super::medicationaddpanel::Message),
     MarkTaken(String),
     MarkSkipped(String),
-    MarkPostponed(String),
+    Reschedule(super::reschedulepanel::Message),
     ToggleSound(u32, u32),
 }

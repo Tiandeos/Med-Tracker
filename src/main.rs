@@ -13,11 +13,11 @@ use ui::view;
 use crate::application::app::App;
 use crate::audio::alarm::{play_alarm, stop_alarm};
 use crate::notify::notification::send_alarm_notification;
-use crate::update::alarm_dismiss::dismiss_expired_alarms;
-use crate::update::loadpanel::load_panel;
 use crate::tray::subscription::tray_subscription;
 use crate::tray::tray::create_tray;
+use crate::update::alarm_dismiss::dismiss_expired_alarms;
 use crate::update::generate_records::generate_future_records;
+use crate::update::loadpanel::load_panel;
 use crate::update::time_check::{check_medication_schedule, check_new_day, update_time};
 use application::panel::Panel;
 use chrono;
@@ -158,7 +158,6 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
         }
         Message::TrayLeftClick => show_main_window(state),
         Message::TrayRightClick { x, y } => {
-            // Close any existing popup first
             let close_existing = if let Some(popup_id) = state.popup_window_id.take() {
                 iced::window::close(popup_id)
             } else {
@@ -217,6 +216,9 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
                 home::time::Message::MedicationAdd(_)
                     | home::time::Message::MarkTaken(_)
                     | home::time::Message::MarkSkipped(_)
+                    | home::time::Message::Reschedule(
+                        home::reschedulepanel::Message::Confirm
+                    )
             );
             let should_generate = matches!(
                 msg,
@@ -235,8 +237,8 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
             Task::none()
         }
         Message::Medications(msg) => {
-            use medications::medicationsmain::Message as MedMsg;
             use crate::ui::panel::medications::editpanel::Message as EditMsg;
+            use medications::medicationsmain::Message as MedMsg;
             let always_save = matches!(
                 msg,
                 MedMsg::ConfirmDelete
@@ -267,7 +269,11 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
         Message::Alarm(msg) => {
             let should_save = matches!(
                 msg,
-                alarm::Message::MarkTaken(_) | alarm::Message::MarkSkipped(_)
+                alarm::Message::MarkTaken(_)
+                    | alarm::Message::MarkSkipped(_)
+                    | alarm::Message::Reschedule(
+                        crate::ui::panel::home::reschedulepanel::Message::Confirm
+                    )
             );
             state
                 .uistate

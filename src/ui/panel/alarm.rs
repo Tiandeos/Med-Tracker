@@ -1,22 +1,25 @@
 use crate::application::medication::record::Record;
 use crate::application::states::medicationtracker::MedicationTracker;
+use crate::ui::panel::home::reschedulepanel::ReschedulePanel;
 use crate::ui::style::alarm::button::{alarm_action_button, alarm_take_button};
 use crate::ui::style::alarm::container::{alarm_panel_container, medication_item_container};
-use ice::widget::{button, column, container, row, scrollable, text, Space};
+use ice::widget::{button, column, container, row, scrollable, stack, text, Space};
 use ice::{Element, Length};
 use iced as ice;
 
 pub struct AlarmUI {
     pub alarming_records: Vec<String>,
+    reschedule_panel: ReschedulePanel,
 }
 impl AlarmUI {
     pub fn new() -> Self {
         Self {
             alarming_records: Vec::new(),
+            reschedule_panel: ReschedulePanel::new(),
         }
     }
 
-    pub fn view<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
+    pub fn view<'a>(&'a self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
         let records: Vec<&Record> = self
             .alarming_records
             .iter()
@@ -30,7 +33,8 @@ impl AlarmUI {
         } else {
             self.multiple_records_content(tracker, &records)
         };
-        container(
+
+        let base = container(
             container(inner)
                 .max_width(1000)
                 .max_height(640)
@@ -39,8 +43,16 @@ impl AlarmUI {
                 .style(alarm_panel_container)
                 .padding(30),
         )
-        .center(Length::Fill)
-        .into()
+        .center(Length::Fill);
+
+        if let Some(overlay) = self.reschedule_panel.view() {
+            stack![base, overlay.map(Message::Reschedule)]
+                .width(Length::Fill)
+                .height(Length::Fill)
+                .into()
+        } else {
+            base.into()
+        }
     }
 
     fn single_record_content<'a>(
@@ -232,7 +244,14 @@ impl AlarmUI {
                 self.remove_record(&record_id);
             }
             Message::MarkRescheduled(record_id) => {
-                self.remove_record(&record_id);
+                if let Some(record) = tracker.records.iter().find(|r| r.id == record_id) {
+                    self.reschedule_panel.open(record_id, record.time);
+                }
+            }
+            Message::Reschedule(msg) => {
+                if let Some(rescheduled_id) = self.reschedule_panel.update(tracker, msg) {
+                    self.remove_record(&rescheduled_id);
+                }
             }
         }
     }
@@ -259,4 +278,5 @@ pub enum Message {
     MarkTaken(String),
     MarkSkipped(String),
     MarkRescheduled(String),
+    Reschedule(crate::ui::panel::home::reschedulepanel::Message),
 }
