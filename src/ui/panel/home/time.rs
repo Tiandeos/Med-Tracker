@@ -5,9 +5,9 @@ use crate::ui::macros::{self, button_with_icon};
 use crate::ui::style;
 use crate::ui::style::time::container::{record_status_container, schedule_container};
 use chrono::{Datelike, Duration, Local, NaiveDate, Timelike};
+use iced::Length::{Fill, FillPortion, Shrink};
 use iced::widget::{Image, button, column, container, row, scrollable, stack, text};
 use iced::{ContentFit, Element, Padding, alignment};
-use iced::Length::{Fill, FillPortion, Shrink};
 
 pub struct TimeUI {
     pub selected_date: NaiveDate,
@@ -78,7 +78,7 @@ impl TimeUI {
             let mut schedule_container_column = column![].padding([20, 40]).spacing(20);
             let hour_minute = format!("{:02}:{:02}", hour, minute);
             let schedule_label = text(hour_minute).size(32).width(Fill);
-            let sound_button = button(button_with_icon!("icons/icons8-sound-50.png", 32, 10))
+            let sound_button = button(button_with_icon!("icons/icons8-sound-100.png", 32, 10))
                 .style(style::time::button::record_action_button)
                 .padding(10)
                 .on_press(Message::ToggleSound(*hour, *minute));
@@ -95,7 +95,7 @@ impl TimeUI {
                 {
                     let status_icon: Element<'a, Message> = match &record.occurrence_status {
                         OccurrenceStatus::Taken { .. } => {
-                            Image::new("icons/icons8-complete-50.png")
+                            Image::new("icons/icons8-complete-100.png")
                                 .content_fit(ContentFit::Cover)
                                 .width(42)
                                 .height(42)
@@ -137,13 +137,13 @@ impl TimeUI {
                             .width(Fill);
                     let is_pending = matches!(record.occurrence_status, OccurrenceStatus::Pending);
                     let action_buttons = row![
-                        button(button_with_icon!("icons/icons8-complete-50.png", 32, 10))
+                        button(button_with_icon!("icons/icons8-complete-100.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press_maybe(
                                 is_pending.then(|| Message::MarkTaken(record.id.clone()))
                             ),
-                        button(button_with_icon!("icons/icons8-cross-50.png", 32, 10))
+                        button(button_with_icon!("icons/icons8-cross-100.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press_maybe(
@@ -180,7 +180,9 @@ impl TimeUI {
             button(macros::button_with_icon_text!("Add Med", "icons/plus.png"))
                 .style(style::time::button::add_button)
                 .padding([20, 100])
-                .on_press(Message::MedicationAdd(super::medicationaddpanel::Message::Open)),
+                .on_press(Message::MedicationAdd(
+                    super::medicationaddpanel::Message::Open,
+                )),
         )
         .center_x(Fill)
         .height(Shrink)
