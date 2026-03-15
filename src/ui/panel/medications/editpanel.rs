@@ -384,7 +384,7 @@ impl MedicationEditPanel {
 
         let header = row![
             text(name).size(32).width(Fill).center(),
-            button(button_with_icon!("icons/icons8-cross-100.png", 50, 10))
+            button(button_with_icon!("icons/cross.png", 50, 10))
                 .on_press(Message::Close)
                 .style(style::time::button::overlay_close_button),
         ]
@@ -432,7 +432,7 @@ impl MedicationEditPanel {
     fn medication_edit_overlay<'a>(&self) -> Element<'a, Message> {
         let header = row![
             text("Edit Medication").size(32).width(Fill).center(),
-            button(button_with_icon!("icons/icons8-cross-100.png", 50, 10))
+            button(button_with_icon!("icons/cross.png", 50, 10))
                 .on_press(Message::BackToOptions)
                 .style(style::time::button::overlay_close_button),
         ]
@@ -444,11 +444,11 @@ impl MedicationEditPanel {
         ]
         .spacing(8);
         if let Some(err) = &self.name_error {
-            name_field = name_field.push(
-                text(err.clone()).size(13).style(|_theme: &Theme| iced::widget::text::Style {
+            name_field = name_field.push(text(err.clone()).size(13).style(|_theme: &Theme| {
+                iced::widget::text::Style {
                     color: Some(Color::from_rgb(0.85, 0.2, 0.2)),
-                }),
-            );
+                }
+            }));
         }
 
         let mut stock_field = column![
@@ -457,11 +457,11 @@ impl MedicationEditPanel {
         ]
         .spacing(8);
         if let Some(err) = &self.stock_error {
-            stock_field = stock_field.push(
-                text(err.clone()).size(13).style(|_theme: &Theme| iced::widget::text::Style {
+            stock_field = stock_field.push(text(err.clone()).size(13).style(|_theme: &Theme| {
+                iced::widget::text::Style {
                     color: Some(Color::from_rgb(0.85, 0.2, 0.2)),
-                }),
-            );
+                }
+            }));
         }
 
         let save_btn = container(
@@ -489,7 +489,7 @@ impl MedicationEditPanel {
     fn schedule_list_overlay<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
         let header = row![
             text("Schedules").size(32).width(Fill).center(),
-            button(button_with_icon!("icons/icons8-cross-100.png", 50, 10))
+            button(button_with_icon!("icons/cross.png", 50, 10))
                 .on_press(Message::BackToOptionsFromSchedules)
                 .style(style::time::button::overlay_close_button),
         ]
@@ -529,7 +529,7 @@ impl MedicationEditPanel {
                         .padding([12, 20])
                         .width(Fill)
                         .on_press(Message::EditSchedule(schedule_id.clone())),
-                    button(button_with_icon!("icons/icons8-cross-100.png", 20, 6))
+                    button(button_with_icon!("icons/cross.png", 20, 6))
                         .style(style::time::button::overlay_close_button)
                         .padding(8)
                         .on_press(Message::DeleteSchedule(schedule_id)),
@@ -573,7 +573,7 @@ impl MedicationEditPanel {
 
         let header = row![
             text(title).size(32).width(Fill).center(),
-            button(button_with_icon!("icons/icons8-cross-100.png", 50, 10))
+            button(button_with_icon!("icons/cross.png", 50, 10))
                 .on_press(Message::BackToScheduleList)
                 .style(style::time::button::overlay_close_button),
         ]
@@ -691,7 +691,7 @@ impl MedicationEditPanel {
     fn stock_overlay<'a>(&self) -> Element<'a, Message> {
         let header = row![
             text("Update Stock").size(32).width(Fill).center(),
-            button(button_with_icon!("icons/icons8-cross-100.png", 50, 10))
+            button(button_with_icon!("icons/cross.png", 50, 10))
                 .on_press(Message::BackToOptionsFromStock)
                 .style(style::time::button::overlay_close_button),
         ]
@@ -703,11 +703,11 @@ impl MedicationEditPanel {
         ]
         .spacing(8);
         if let Some(err) = &self.stock_edit_error {
-            stock_field = stock_field.push(
-                text(err.clone()).size(13).style(|_theme: &Theme| iced::widget::text::Style {
+            stock_field = stock_field.push(text(err.clone()).size(13).style(|_theme: &Theme| {
+                iced::widget::text::Style {
                     color: Some(Color::from_rgb(0.85, 0.2, 0.2)),
-                }),
-            );
+                }
+            }));
         }
 
         let save_btn = container(

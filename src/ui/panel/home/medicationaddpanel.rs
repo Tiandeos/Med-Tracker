@@ -244,7 +244,7 @@ impl MedicationAddPanel {
     fn medication_overlay<'a>(&self) -> Element<'a, Message> {
         let header = row![
             text("New Medication").size(36).width(Fill).center(),
-            button(button_with_icon!("icons/icons8-cross-100.png", 30, 10))
+            button(button_with_icon!("icons/cross.png", 30, 10))
                 .on_press(Message::Close)
                 .style(style::time::button::overlay_close_button)
         ]
@@ -299,7 +299,7 @@ impl MedicationAddPanel {
 
         let header = row![
             text(med_name).size(28).width(Fill),
-            button(button_with_icon!("icons/icons8-cross-100.png", 30, 10))
+            button(button_with_icon!("icons/cross.png", 30, 10))
                 .on_press(Message::Done)
                 .style(style::time::button::overlay_close_button)
         ]
@@ -339,7 +339,7 @@ impl MedicationAddPanel {
                         .padding([12, 20])
                         .width(Fill)
                         .on_press(Message::EditSchedule(schedule_id.clone())),
-                    button(button_with_icon!("icons/icons8-cross-100.png", 20, 6))
+                    button(button_with_icon!("icons/cross.png", 20, 6))
                         .style(style::time::button::overlay_close_button)
                         .padding(8)
                         .on_press(Message::DeleteSchedule(schedule_id)),
@@ -401,7 +401,7 @@ impl MedicationAddPanel {
             column![text(med_name).size(14), text(title).size(28)]
                 .spacing(2)
                 .width(Fill),
-            button(button_with_icon!("icons/icons8-cross-100.png", 30, 10))
+            button(button_with_icon!("icons/cross.png", 30, 10))
                 .on_press(Message::BackToList)
                 .style(style::time::button::overlay_close_button)
         ]

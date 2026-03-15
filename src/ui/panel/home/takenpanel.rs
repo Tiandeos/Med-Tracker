@@ -74,7 +74,7 @@ impl TakenPanel {
             text("When did you take your medication?")
                 .size(18)
                 .width(Fill),
-            button(button_with_icon!("icons/icons8-cross-100.png", 30, 10))
+            button(button_with_icon!("icons/cross.png", 30, 10))
                 .style(style::time::button::overlay_close_button)
                 .padding(5)
                 .on_press(Message::Cancel),
@@ -114,7 +114,7 @@ impl TakenPanel {
     fn exact_time_view(&self) -> Element<'_, Message> {
         let header = row![
             text("Select time").size(22).width(Fill),
-            button(button_with_icon!("icons/icons8-cross-100.png", 30, 10))
+            button(button_with_icon!("icons/cross.png", 30, 10))
                 .style(style::time::button::overlay_close_button)
                 .padding(5)
                 .on_press(Message::Cancel),
@@ -145,11 +145,12 @@ impl TakenPanel {
         let mut content = column![header, time_row].spacing(20);
 
         if let Some(warning) = &self.warning {
-            let warning_text = text(warning).size(14).style(|theme: &iced::Theme| {
-                iced::widget::text::Style {
-                    color: Some(theme.extended_palette().danger.base.color),
-                }
-            });
+            let warning_text =
+                text(warning)
+                    .size(14)
+                    .style(|theme: &iced::Theme| iced::widget::text::Style {
+                        color: Some(theme.extended_palette().danger.base.color),
+                    });
             content = content.push(warning_text);
         }
 

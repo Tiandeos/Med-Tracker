@@ -88,7 +88,7 @@ impl Record {
             .spacing(4)
             .width(Fill);
 
-            let delete_btn = button(button_with_icon!("icons/icons8-cross-100.png", 20, 0))
+            let delete_btn = button(button_with_icon!("icons/cross.png", 20, 0))
                 .style(style::time::button::overlay_close_button)
                 .padding(10)
                 .on_press(Message::AskDelete(med.id.clone()));

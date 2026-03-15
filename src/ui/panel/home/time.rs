@@ -104,7 +104,7 @@ impl TimeUI {
             let mut schedule_container_column = column![].padding([20, 40]).spacing(20);
             let hour_minute = format!("{:02}:{:02}", hour, minute);
             let schedule_label = text(hour_minute).size(32).width(Fill);
-            let sound_button = button(button_with_icon!("icons/icons8-sound-100.png", 32, 10))
+            let sound_button = button(button_with_icon!("icons/soundon.png", 32, 10))
                 .style(style::time::button::record_action_button)
                 .padding(10)
                 .on_press(Message::ToggleSound(*hour, *minute));
@@ -120,15 +120,13 @@ impl TimeUI {
                     .find(|med| med.id == record.medication_id)
                 {
                     let status_icon: Element<'a, Message> = match &record.occurrence_status {
-                        OccurrenceStatus::Taken { .. } => {
-                            Image::new("icons/icons8-complete-100.png")
-                                .content_fit(ContentFit::Cover)
-                                .width(42)
-                                .height(42)
-                                .into()
-                        }
+                        OccurrenceStatus::Taken { .. } => Image::new("icons/check.png")
+                            .content_fit(ContentFit::Cover)
+                            .width(42)
+                            .height(42)
+                            .into(),
                         OccurrenceStatus::Skipped { .. } | OccurrenceStatus::Missed => {
-                            Image::new("icons/icons8-cross-100.png")
+                            Image::new("icons/cross.png")
                                 .content_fit(ContentFit::Cover)
                                 .width(42)
                                 .height(42)
@@ -163,28 +161,24 @@ impl TimeUI {
                             .width(Fill);
                     let is_pending = matches!(record.occurrence_status, OccurrenceStatus::Pending);
                     let action_buttons = row![
-                        button(button_with_icon!("icons/icons8-complete-100.png", 32, 10))
+                        button(button_with_icon!("icons/check.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press_maybe(
-                                is_pending.then(|| Message::Taken(
-                                    super::takenpanel::Message::Open(record.id.clone())
-                                ))
-                            ),
-                        button(button_with_icon!("icons/icons8-cross-100.png", 32, 10))
+                            .on_press_maybe(is_pending.then(|| Message::Taken(
+                                super::takenpanel::Message::Open(record.id.clone())
+                            ))),
+                        button(button_with_icon!("icons/cross.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press_maybe(
                                 is_pending.then(|| Message::MarkSkipped(record.id.clone()))
                             ),
-                        button(button_with_icon!("icons/icons8-clock-50.png", 32, 10))
+                        button(button_with_icon!("icons/clock.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press_maybe(
-                                is_pending.then(|| Message::Reschedule(
-                                    super::reschedulepanel::Message::Open(record.id.clone())
-                                ))
-                            ),
+                            .on_press_maybe(is_pending.then(|| Message::Reschedule(
+                                super::reschedulepanel::Message::Open(record.id.clone())
+                            ))),
                     ]
                     .spacing(30)
                     .align_y(alignment::Vertical::Center);
@@ -257,7 +251,7 @@ impl TimeUI {
 pub enum Message {
     SelectDay(NaiveDate),
     MedicationAdd(super::medicationaddpanel::Message),
-    MarkTaken(String),
+    Taken(super::takenpanel::Message),
     MarkSkipped(String),
     Reschedule(super::reschedulepanel::Message),
     ToggleSound(u32, u32),
