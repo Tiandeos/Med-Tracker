@@ -100,28 +100,27 @@ fn generate_interval_records(
     let interval = schedule.period_time;
     println!("Entered Generate interval records");
     println!("Start-Date: {start_date} End-Date: {end_date}");
-    // Find the last record for this medication+schedule to use as anchor
-    let anchor_date = find_last_record_date(existing_records, &medication.id, &schedule.id)
-        .unwrap_or_else(|| medication.created_at.with_timezone(&Local).date_naive());
+    let anchor_date =
+        find_last_record_date(existing_records, &medication.id, &schedule.id).unwrap_or(start_date);
     let mut records = Vec::new();
     let mut date = anchor_date;
-    if date >= start_date && date <= end_date {
+    while date < start_date {
+        date = advance_by_period(date, period_type, interval);
+    }
+    if date <= end_date {
         let record = create_record(medication, schedule, date);
         if !record_exists(existing_records, &record) {
             records.push(record);
         }
     }
-    // Step forward by intervals until we pass the end date
     loop {
         date = advance_by_period(date, period_type, interval);
         if date > end_date {
             break;
         }
-        if date >= start_date {
-            let record = create_record(medication, schedule, date);
-            if !record_exists(existing_records, &record) {
-                records.push(record);
-            }
+        let record = create_record(medication, schedule, date);
+        if !record_exists(existing_records, &record) {
+            records.push(record);
         }
     }
 
