@@ -51,6 +51,7 @@ impl MedicationTracker {
     pub fn reschedule_record(&mut self, record_id: &str, new_time: DateTime<Utc>) {
         if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
             record.time = new_time;
+            record.rescheduled = true;
         }
     }
 }

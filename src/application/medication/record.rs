@@ -10,6 +10,8 @@ pub struct Record {
     pub schedule_id: String,         // Schedule UUID of medication
     pub time: DateTime<chrono::Utc>, // Time of record
     pub occurrence_status: OccurrenceStatus,
+    #[serde(default)]
+    pub rescheduled: bool,
 }
 impl Record {
     pub fn new(medication_id: String, schedule_id: String, time: DateTime<chrono::Utc>) -> Self {
@@ -19,6 +21,7 @@ impl Record {
             schedule_id,
             time,
             occurrence_status: OccurrenceStatus::Pending,
+            rescheduled: false,
         }
     }
     pub fn empty_new() -> Self {
@@ -28,6 +31,7 @@ impl Record {
             schedule_id: String::new(),
             time: chrono::Utc::now(),
             occurrence_status: OccurrenceStatus::Pending,
+            rescheduled: false,
         }
     }
 }

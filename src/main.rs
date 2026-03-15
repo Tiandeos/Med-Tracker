@@ -214,8 +214,11 @@ fn update(state: &mut App, message: Message) -> Task<Message> {
             let should_save = matches!(
                 msg,
                 home::time::Message::MedicationAdd(_)
-                    | home::time::Message::MarkTaken(_)
                     | home::time::Message::MarkSkipped(_)
+                    | home::time::Message::Taken(
+                        home::takenpanel::Message::TakeNow
+                            | home::takenpanel::Message::Confirm
+                    )
                     | home::time::Message::Reschedule(
                         home::reschedulepanel::Message::Confirm
                     )

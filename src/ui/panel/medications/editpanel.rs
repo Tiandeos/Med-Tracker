@@ -230,10 +230,13 @@ impl MedicationEditPanel {
                     if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == med_id) {
                         med.schedules.retain(|s| s.id != id);
                     }
-                    let now = chrono::Utc::now();
-                    tracker
-                        .records
-                        .retain(|r| !(r.schedule_id == id && r.time > now && matches!(r.occurrence_status, OccurrenceStatus::Pending)));
+                    let today = chrono::Local::now().date_naive();
+                    tracker.records.retain(|r| {
+                        !(r.schedule_id == id
+                            && r.time.with_timezone(&chrono::Local).date_naive() >= today
+                            && matches!(r.occurrence_status, OccurrenceStatus::Pending)
+                            && !r.rescheduled)
+                    });
                 }
             }
             Message::BackToOptionsFromSchedules => self.section = Section::Options,
@@ -272,10 +275,13 @@ impl MedicationEditPanel {
                 if let Some(med_id) = med_id {
                     if let Some(ref eid) = edit_id {
                         let eid = eid.clone();
-                        let now = chrono::Utc::now();
-                        tracker
-                            .records
-                            .retain(|r| !(r.schedule_id == eid && r.time > now && matches!(r.occurrence_status, OccurrenceStatus::Pending)));
+                        let today = chrono::Local::now().date_naive();
+                        tracker.records.retain(|r| {
+                            !(r.schedule_id == eid
+                                && r.time.with_timezone(&chrono::Local).date_naive() >= today
+                                && matches!(r.occurrence_status, OccurrenceStatus::Pending)
+                                && !r.rescheduled)
+                        });
                         if let Some(med) = tracker.medications.iter_mut().find(|m| m.id == med_id) {
                             if let Some(s) = med.schedules.iter_mut().find(|s| s.id == eid) {
                                 s.time = [hour, minute];
