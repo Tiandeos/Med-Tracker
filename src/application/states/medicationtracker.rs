@@ -31,6 +31,12 @@ impl MedicationTracker {
             record.occurrence_status = OccurrenceStatus::Taken { taken_at: Utc::now() };
         }
     }
+
+    pub fn mark_as_taken_at(&mut self, record_id: &str, taken_at: DateTime<Utc>) {
+        if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
+            record.occurrence_status = OccurrenceStatus::Taken { taken_at };
+        }
+    }
     pub fn mark_as_skipped(&mut self, record_id: &str) {
         if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
             record.occurrence_status = OccurrenceStatus::Skipped { reason: None };

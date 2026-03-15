@@ -13,6 +13,7 @@ pub struct TimeUI {
     pub selected_date: NaiveDate,
     medication_panel: super::medicationaddpanel::MedicationAddPanel,
     reschedule_panel: super::reschedulepanel::ReschedulePanel,
+    taken_panel: super::takenpanel::TakenPanel,
 }
 
 impl TimeUI {
@@ -21,6 +22,7 @@ impl TimeUI {
             selected_date: Local::now().date_naive(),
             medication_panel: super::medicationaddpanel::MedicationAddPanel::new(),
             reschedule_panel: super::reschedulepanel::ReschedulePanel::new(),
+            taken_panel: super::takenpanel::TakenPanel::new(),
         }
     }
 
@@ -40,8 +42,17 @@ impl TimeUI {
             main.into()
         };
 
-        if let Some(overlay) = self.reschedule_panel.view() {
+        let base: Element<Message> = if let Some(overlay) = self.reschedule_panel.view() {
             stack![base, overlay.map(Message::Reschedule)]
+                .width(Fill)
+                .height(Fill)
+                .into()
+        } else {
+            base
+        };
+
+        if let Some(overlay) = self.taken_panel.view() {
+            stack![base, overlay.map(Message::Taken)]
                 .width(Fill)
                 .height(Fill)
                 .into()
@@ -57,8 +68,10 @@ impl TimeUI {
                 println!("Current TimeUI Selected Date: {}", self.selected_date)
             }
             Message::MedicationAdd(msg) => self.medication_panel.update(state, msg),
-            Message::MarkTaken(id) => state.mark_as_taken(&id),
             Message::MarkSkipped(id) => state.mark_as_skipped(&id),
+            Message::Taken(msg) => {
+                self.taken_panel.update(state, msg);
+            }
             Message::Reschedule(msg) => {
                 self.reschedule_panel.update(state, msg);
             }
@@ -154,7 +167,9 @@ impl TimeUI {
                             .style(style::time::button::record_action_button)
                             .padding(10)
                             .on_press_maybe(
-                                is_pending.then(|| Message::MarkTaken(record.id.clone()))
+                                is_pending.then(|| Message::Taken(
+                                    super::takenpanel::Message::Open(record.id.clone())
+                                ))
                             ),
                         button(button_with_icon!("icons/icons8-cross-100.png", 32, 10))
                             .style(style::time::button::record_action_button)
