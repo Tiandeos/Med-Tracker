@@ -197,6 +197,15 @@ impl AlarmUI {
                         .style(alarm_action_button)
                         .width(Length::Shrink)
                         .on_press(Message::MarkSkipped(record.id.clone())),
+                        button(
+                            container(text("Reschedule"))
+                                .center_x(Length::Fill)
+                                .center_y(Length::Fill)
+                                .padding(10)
+                        )
+                        .style(alarm_action_button)
+                        .width(Length::Shrink)
+                        .on_press(Message::MarkRescheduled(record.id.clone())),
                     ]
                     .spacing(10),
                 ]
