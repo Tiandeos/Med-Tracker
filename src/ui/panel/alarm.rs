@@ -3,7 +3,8 @@ use crate::application::states::medicationtracker::MedicationTracker;
 use crate::ui::panel::home::reschedulepanel::ReschedulePanel;
 use crate::ui::style::alarm::button::{alarm_action_button, alarm_take_button};
 use crate::ui::style::alarm::container::{alarm_panel_container, medication_item_container};
-use ice::widget::{button, column, container, row, scrollable, stack, text, Space};
+use chrono::Local;
+use ice::widget::{Space, button, column, container, row, scrollable, stack, text};
 use ice::{Element, Length};
 use iced as ice;
 
@@ -68,7 +69,11 @@ impl AlarmUI {
         let schedule =
             medication.and_then(|med| med.schedules.iter().find(|s| s.id == record.schedule_id));
         let dose = schedule.map(|s| s.dose).unwrap_or(0.0);
-        let time = record.time.format("%H:%M").to_string();
+        let time = record
+            .time
+            .with_timezone(&Local)
+            .format("%H:%M")
+            .to_string();
         let schedule_time_text = format!("{} - Medication", time);
         column![
             container(
@@ -143,7 +148,11 @@ impl AlarmUI {
         records: &[&'a Record],
     ) -> Element<'a, Message> {
         let schedule_time_text = if let Some(first_record) = records.first() {
-            let time = first_record.time.format("%H:%M").to_string();
+            let time = first_record
+                .time
+                .with_timezone(&Local)
+                .format("%H:%M")
+                .to_string();
             format!("{} - Medication", time)
         } else {
             String::from("Medication")
