@@ -126,7 +126,7 @@ impl AlarmUI {
                             .center_y(Length::Fill)
                     )
                     .style(alarm_action_button)
-                    .width(Length::Shrink)
+                    .width(Length::Fill)
                     .height(Length::FillPortion(1))
                     .on_press(Message::MarkRescheduled(record.id.clone()))
                 )
