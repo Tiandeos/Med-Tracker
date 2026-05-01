@@ -59,6 +59,11 @@ pub fn theme(state: &App, _window_id: window::Id) -> Option<Theme> {
 }
 
 fn detect_dark_light() -> Result<Theme, dark_light::Error> {
+    let rt = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .map_err(|e| dark_light::Error::Io(std::io::Error::new(std::io::ErrorKind::Other, e)))?;
+    let _guard = rt.enter();
     let mode = dark_light::detect()?;
     let theme = match mode {
         Mode::Dark => Theme::Nord,

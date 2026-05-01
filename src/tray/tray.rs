@@ -13,7 +13,6 @@ pub fn is_wayland() -> bool {
 
 pub fn create_tray() -> Option<TrayIcon> {
     if is_wayland() {
-        eprintln!("[tray] Wayland session detected — tray not supported, skipping.");
         return None;
     }
 

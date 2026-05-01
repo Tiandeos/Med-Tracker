@@ -28,11 +28,19 @@ fn main() {
         .title(view::title)
         .theme(view::theme)
         .subscription(|state| {
-            iced::Subscription::batch([
-                update_time(state),
-                iced::window::close_requests().map(Message::CloseRequested),
-                tray_subscription(state.tray_icon.is_some()),
-            ])
+            if crate::tray::tray::is_wayland() {
+                iced::Subscription::batch([
+                    update_time(state),
+                    iced::window::close_requests().map(Message::CloseRequested),
+                    crate::tray::wayland::wayland_tray_subscription(),
+                ])
+            } else {
+                iced::Subscription::batch([
+                    update_time(state),
+                    iced::window::close_requests().map(Message::CloseRequested),
+                    tray_subscription(state.tray_icon.is_some()),
+                ])
+            }
         })
         .run()
         .expect("a");
