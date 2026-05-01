@@ -26,7 +26,7 @@ impl TimeUI {
         }
     }
 
-    pub fn view<'a>(&self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
+    pub fn view<'a>(&'a self, tracker: &'a MedicationTracker) -> Element<'a, Message> {
         let main = column![
             self.calendar_part(),
             container(self.main_part(tracker)).height(Fill),
