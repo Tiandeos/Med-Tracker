@@ -69,6 +69,7 @@ impl TimeUI {
             }
             Message::MedicationAdd(msg) => self.medication_panel.update(state, msg),
             Message::MarkSkipped(id) => state.mark_as_skipped(&id),
+            Message::MarkTakenToggle(id) => state.mark_as_taken(&id),
             Message::Taken(msg) => {
                 self.taken_panel.update(state, msg);
             }
@@ -159,26 +160,27 @@ impl TimeUI {
                         column![text(&med.name).size(22), text(status_text).size(16)]
                             .spacing(5)
                             .width(Fill);
-                    let is_pending = matches!(record.occurrence_status, OccurrenceStatus::Pending);
                     let action_buttons = row![
                         button(button_with_icon!("icons/check.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press_maybe(is_pending.then(|| Message::Taken(
-                                super::takenpanel::Message::Open(record.id.clone())
-                            ))),
+                            .on_press(if matches!(record.occurrence_status, OccurrenceStatus::Taken { .. }) {
+                                Message::MarkTakenToggle(record.id.clone())
+                            } else {
+                                Message::Taken(
+                                    super::takenpanel::Message::Open(record.id.clone())
+                                )
+                            }),
                         button(button_with_icon!("icons/cross.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press_maybe(
-                                is_pending.then(|| Message::MarkSkipped(record.id.clone()))
-                            ),
+                            .on_press(Message::MarkSkipped(record.id.clone())),
                         button(button_with_icon!("icons/clock.png", 32, 10))
                             .style(style::time::button::record_action_button)
                             .padding(10)
-                            .on_press_maybe(is_pending.then(|| Message::Reschedule(
+                            .on_press(Message::Reschedule(
                                 super::reschedulepanel::Message::Open(record.id.clone())
-                            ))),
+                            )),
                     ]
                     .spacing(30)
                     .align_y(alignment::Vertical::Center);
@@ -253,6 +255,7 @@ pub enum Message {
     MedicationAdd(super::medicationaddpanel::Message),
     Taken(super::takenpanel::Message),
     MarkSkipped(String),
+    MarkTakenToggle(String),
     Reschedule(super::reschedulepanel::Message),
     ToggleSound(u32, u32),
 }

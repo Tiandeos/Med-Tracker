@@ -28,18 +28,30 @@ impl MedicationTracker {
     }
     pub fn mark_as_taken(&mut self, record_id: &str) {
         if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
-            record.occurrence_status = OccurrenceStatus::Taken { taken_at: Utc::now() };
+            if matches!(record.occurrence_status, OccurrenceStatus::Taken { .. }) {
+                record.occurrence_status = OccurrenceStatus::Pending;
+            } else {
+                record.occurrence_status = OccurrenceStatus::Taken { taken_at: Utc::now() };
+            }
         }
     }
 
     pub fn mark_as_taken_at(&mut self, record_id: &str, taken_at: DateTime<Utc>) {
         if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
-            record.occurrence_status = OccurrenceStatus::Taken { taken_at };
+            if matches!(record.occurrence_status, OccurrenceStatus::Taken { .. }) {
+                record.occurrence_status = OccurrenceStatus::Pending;
+            } else {
+                record.occurrence_status = OccurrenceStatus::Taken { taken_at };
+            }
         }
     }
     pub fn mark_as_skipped(&mut self, record_id: &str) {
         if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
-            record.occurrence_status = OccurrenceStatus::Skipped { reason: None };
+            if matches!(record.occurrence_status, OccurrenceStatus::Skipped { .. }) {
+                record.occurrence_status = OccurrenceStatus::Pending;
+            } else {
+                record.occurrence_status = OccurrenceStatus::Skipped { reason: None };
+            }
         }
     }
     pub fn mark_as_missed(&mut self, record_id: &str) {
@@ -52,6 +64,7 @@ impl MedicationTracker {
         if let Some(record) = self.records.iter_mut().find(|r| r.id == record_id) {
             record.time = new_time;
             record.rescheduled = true;
+            record.occurrence_status = OccurrenceStatus::Pending;
         }
     }
 }
